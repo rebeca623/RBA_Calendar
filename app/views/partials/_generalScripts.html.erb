@@ -1,0 +1,57 @@
+<script>
+    var doc = $(document);
+    var width = $(document).width();
+    var height = $(document).height();
+    
+    jQuery.fn.center = function(){
+        this.css("position","fixed");
+        this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+        this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+
+        return this;
+    }
+
+    $(document).on("ready", function(){
+        var usrRole = $("#userRole").text();
+        if( usrRole == 4 || usrRole == 2){
+            $.ajax({
+                type: "POST",
+                url: '/day/getAllUsers',
+                dataType: "json",
+                contentType: "application/json; charset-utf8",
+                success: function(resp){
+                    var usr = "";
+                    $(resp).each(function(i,e){
+                        usr += "<li class='lstLawyer' data-clr='" + e.color.color + "' data-usr='" + e.id + "'><a>" + e.nombre + " " + e.apaterno + "</a></li>"
+                    });
+
+                    $(".listUsers").append(usr)
+
+                    $(".listUsers > li").each(function(i,e){
+                         var auxCol = $(e).attr("data-clr");
+                         $(e).css({"color":auxCol, "font-size":"18px", "cursor":"pointer"});
+                    })
+                }, error: function(xhr,status,error){
+                    console.log(xhr);
+                    alert(error);
+                }
+            });
+        }
+
+        $("#allCalendars").on("click", function(){
+            $(".childtdcitas, .dayApp").show();
+        });   
+
+        $("#dashVar").on("click", function(e){
+            window.location.href = "/users/variety"
+        })    
+
+        $(".notifications .messages").hide();
+
+        $(".noti").click(function() {
+            if ($(this).children(".messages").children().length > 0) {
+                $(this).children(".messages").fadeToggle(300);
+            }
+        });
+    });
+</script>

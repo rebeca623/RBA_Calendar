@@ -1,0 +1,135 @@
+<%= render "partials/home" %>
+<style>
+  #user_role_id{
+    margin-top: 20px;
+    margin-right: 5px;
+    height: 39px;
+    width: 177px;
+    border-radius: 5px;
+  }
+</style>
+<%= devise_error_messages! %>
+<div id="form-div2">
+    <%= form_for(resource, html:{ id: "login-form2"}, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      
+    
+        <label class="uIcono" for="name"><i class="fa fa-user-plus" aria-hidden="true"></i></label>
+        <div class="nombre">
+            <%= f.text_field :nombre, autofocus: true, placeholder: "Nombre", id: "uName", class: "nUser" %>
+            <%= f.text_field :apaterno, placeholder: "A. paterno", id: "uApaterno", class: "nUser" %>
+            <%= f.text_field :amaterno, placeholder: "A. materno", id: "uAmaterno", class: "nUser" %>
+        </div>
+        <br>
+
+        <label class="uIcono"><i class="fa fa-tty" aria-hidden="true"></i></label>
+        <%= f.text_field :telefono, placeholder: "Extensión", id: "uTel", class: "nUser" %>
+        <label class="uIcono" id="iEmail"><i class="fa fa-envelope" aria-hidden="true"></i></label>
+        <%= f.email_field :email, placeholder: "usuario@correo.com", id: "uEmail", class: "nUser" %>
+        <br />
+        <label class="uIcono" id="iContra"><i class="fa fa-lock" aria-hidden="true"></i></label>
+        <%= f.password_field :password, autocomplete: "off", placeholder: "contraseña", id: "uPass", class: "nUser" %> 
+        <%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Confirmar", id: "uPassConf", class: "nUser2" %>
+        <br>
+        <label class="uIcono" id="uColor"><i class="fa fa-envelope" aria-hidden="true"></i></label>
+        
+        <%= f.select :role_id, options_from_collection_for_select(@roles, "id", "rol"), prompt: "Seleccione.."%>
+        <%= submit_tag "Registrar", class: "registrar" %>
+
+        <%= f.hidden_field :color_id, id: "sltdColor" %>
+
+    <%end%>
+</div>
+
+<div class="colorIn">
+    <table class="color">
+        <tbody>
+            <tr>
+                <td class="slctOpt">Color 1<div class="colorOpt"><%= image_tag("1.png", class: "colCont", :data => {:main => "15"})%></div></td>
+                <td class="slctOpt">Color 2<div class="colorOpt"><%= image_tag("2.png", class: "colCont", :data => {:main => "16"})%></div></td>
+                <td class="slctOpt">Color 3<div class="colorOpt"><%= image_tag("3.png", class: "colCont", :data => {:main => "17"})%></div></td>
+                <td class="slctOpt">Color 4<div class="colorOpt"><%= image_tag("4.png", class: "colCont", :data => {:main => "18"})%></div></td>
+                <td class="slctOpt">Color 5<div class="colorOpt"><%= image_tag("5.png", class: "colCont", :data => {:main => "19"})%></div></td>
+                <td class="slctOpt">Color 6<div class="colorOpt"><%= image_tag("6.png", class: "colCont", :data => {:main => "20"})%></div></td>
+            </tr>
+            <tr>
+                <td class="slctOpt">Color 7<div class="colorOpt"><%= image_tag("7.png", class: "colCont", :data => {:main => "21"})%></div></td>
+                <td class="slctOpt">Color 8<div class="colorOpt"><%= image_tag("8.png", class: "colCont", :data => {:main => "22"})%></div></td>
+                <td class="slctOpt">Color 9<div class="colorOpt"><%= image_tag("9.png", class: "colCont", :data => {:main => "23"})%></div></td>
+                <td class="slctOpt">Color 10<div class="colorOpt"><%= image_tag("10.png", class: "colCont", :data => {:main => "24"})%></div></td>
+                <td class="slctOpt">Color 11<div class="colorOpt"><%= image_tag("11.png", class: "colCont", :data => {:main => "25"})%></div></td>
+                <td class="slctOpt">Color 12<div class="colorOpt"><%= image_tag("12.png", class: "colCont", :data => {:main => "26"})%></div></td>
+            </tr>
+        </tbody>
+    </table>
+</div>  
+
+<%= render "devise/shared/links" %>
+
+<script type="text/javascript">
+
+    $(document).on("ready", function(){
+
+        var datos = $(".field_with_errors").children();
+        console.log(datos)
+
+        $(datos).each(function(i,e){
+            var elem = $(e);
+            var divParent = elem.parent();
+            var idElem = elem.attr("id");
+
+            if(idElem == "uEmail"){
+                elem.remove();
+                elem.insertAfter("#iEmail")
+            }
+            if(idElem == "uPass"){
+                elem.remove();
+                elem.insertAfter("#iContra")
+            }
+            if(idElem == "user_role_id"){
+                elem.remove();
+                elem.insertAfter("#uColor")
+            }
+            if(idElem == "sltdColor"){
+                elem.remove();
+                elem.insertAfter(".registrar")
+            }
+
+            divParent.remove();
+
+            console.log(idElem)
+        });
+
+        $(".colorOpt").on("mouseover",function(){
+            
+            var div = $(this);
+            div.css({
+                "border":"3px solid #16A086",
+                "border-radius":"5px"
+            });
+        });
+
+        $(".colorOpt").on("mouseleave", function(){
+            var div = $(this);
+            div.css({
+                "border": "none"
+            });
+        });
+
+        $(".slctOpt").on("click", function(){
+            var div = $(this);
+            $(".slctOpt").css({
+                "border": "none"
+            });
+
+            div.css({
+                "border":"3px solid #16A086",
+                "border-radius":"5px"
+            });
+            var color = div.find(".colCont").data("main");
+
+            $("#sltdColor").val(color)
+            console.log(color)
+        });
+
+    });
+</script>

@@ -1,0 +1,641 @@
+<%= render "partials/mainNav" %>
+<%= render "partials/dashboardMenu"%>
+
+<div id="divUsrs" class="dshBox divVar" hidden>
+	<h3>Usuarios del sistema</h3>
+	<hr style="border-top: 1px solid #ccc;">
+	<div class="divUsrsOpt">
+		<label>Status:</label>
+		<select id="slctSt" class='select'>
+			<option value="">Seleccione..</option>
+			<option value="2">Activo</option>
+			<option value="1">Inactivos</option>
+			<option value="0">Pendientes</option>
+		</select>
+		<label>Por permisos:</label>
+		<select id="slctRl" class="select">
+			<option value="">Seleccione..</option>
+			<option value="1">Administrador</option>
+			<option value="2">Gerente</option>
+			<option value="3">Asesor</option>
+			<option value="4">Recepcion</option>
+		</select>
+		<input type="button" id="btnUsrs" class="btn btn-sm btn-default" value="Buscar">
+	</div>
+	<div class="usrsTbl">
+		<table id="tblUsrsLst" class="table table-hover">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Nombre</th>
+					<th>Correo</th>
+					<th>Telefono</th>
+					<th>Permisos</th>
+					<th>Fecha de ingreso</th>
+					<th>Status</th>
+					<th>Ubicaci&#243;n</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody class="tblDataUsrs"></tbody>
+		</table>
+	</div>
+</div>
+
+<div id="divVac" class="dshBox divVar" hidden>
+	<div class="divVacation">
+		<h3>Aviso de periodo vacacional</h3>
+		<hr style="border-top: 1px solid #ccc;">
+		<div class="form-group">
+			<label for="">Fecha inicial:</label>
+			<input type="date" id="vacStrt">
+			<label for="">Fecha de regreso:</label>
+			<input type="date" id="vacEnd"> 
+			<br>
+			<label for="">Comentario:</label><textarea name="" id="txtCmnt" cols="10" rows="10" class="form-control" style="height:50px; width:100%;"></textarea>
+			
+		</div>
+		<hr style="border-top: 1px solid #ccc;">
+		<input type="button" class="btn btn-md btn-default pull-right" value="Guardar" id="btnVac">
+		<h4>Nota:</h4>
+		<p>El periodo de dias seleccionados quedaran inhabilitados para que no sea posible crear tareas durante ese periodo de tiempo.</p>
+	</div>
+</div>
+
+<div id="divUsr" class="dshBox divVar" hidden>
+	<div class="container">
+		<h3>Perfil de usuario</h3>
+		<% if current_user.role_id == 1 || current_user.role_id == 2 %>
+			<label>Seleccione usuario:</label>
+			<select id="slctUsrEdt" class='select'>
+				<option value="">Seleccione..</option>
+			</select>
+		<% end %>
+		<hr style="border-top: 1px solid #ccc;">
+		<div class="row">
+			<div class="" >
+				<div class="panel panel-info">
+					<div class="panel-heading" style="background-color:<%= @colorDos %>; border-color:<%= @colorDos %>; color:white;">
+						<h3 class="panel-title"><b class="usrName"><%= @usuario %></b></h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="http://babyinfoforyou.com/wp-content/uploads/2014/10/avatar-300x300.png" class="img-circle img-responsive"> </div>
+							<div class=" col-md-9 col-lg-9 "> 
+								<table class="table table-user-information">
+									<tbody>
+										<tr><td>Email:</td><td class="usrEmail"><%= @userEmail %></td></tr>
+										<tr><td>Telefono:</td><td class="usrTel"><%= @userTel %></td></tr>
+										<tr><td>Ultima sesion:</td><td class="lstSsn"><!--DD/MMM/YYYY HH:mm:ss a--> <%= @userLastSes %></td></tr>
+										<tr><td>Ultima ubicacion:</td><td class="lstLtn"><!--IP Address--><%= @userIp %></td></tr>
+										<tr><td>Fecha de registro:</td><td class="usrCtn"><!--DD/MMM/YYYY HH:mm:ss a --><%= @userCreate %></td></tr>
+										<!--<tr>
+											<td>Hire date:</td><td>06/23/2013</td>
+										</tr>
+										<tr>
+											<td>Date of Birth</td><td>01/24/1988</td>
+										</tr>
+										<tr>
+											<tr>
+												<td>Gender</td><td>Male</td>
+											</tr>
+											<tr>
+												<td>Home Address</td><td>Metro Manila,Philippines</td>
+											</tr>
+											<tr>
+												<td>Email</td><td><a href="mailto:info@support.com">info@support.com</a></td>
+											</tr>
+											<td>Phone Number</td>
+											<td>123-4567-890(Landline)<br><br>555-4567-890(Mobile)</td>
+										</tr>-->
+									</tbody>
+								</table>
+								<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+									<% if current_user.role_id == 1 || current_user.role_id == 2 %>
+										<div class="panel panel-default">
+											<div class="panel-heading" role="tab" id="headingOne">
+												<h4 class="panel-title">
+													<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+														Asignaciones
+													</a>
+												</h4>
+											</div>
+											<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+												<div class="panel-body" style="height:350px;overflow:scroll;">
+													<table class="table table-striped custab">
+														<thead>
+															<tr>
+																<th>#</th>
+																<th>Proceso</th>
+																<th class="text-center">Accion</th>
+															</tr>
+														</thead>
+														<tbody id="casesTbl"></tbody>
+													</table>
+													<hr>
+													<form class="form-inline">
+														<div class="form-group">
+															<!--<label class="sr-only" for="exampleInputEmail3">Email address</label>
+															<input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">-->
+															<label for="">Asignar tarea:</label>
+															<select name="" id="slctCase" class="form-control">
+																<option value="">Seleccione proceso...</option>
+															</select>
+														</div>
+														<button type="submit" id="btnAsignar" class="btn btn-sm btn-success pull-right">Asignar</button>
+													</form>
+												</div>
+											</div>
+										</div>
+									<% end %>
+									<div class="panel panel-default">
+										<div class="panel-heading" role="tab" id="headingTwo">
+											<h4 class="panel-title">
+												<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+													Colores favoritos
+												</a>
+											</h4>
+										</div>
+										<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+											<div class="panel-body">
+												Seleccione una combinacion de colores.
+												<hr>
+												Colores actuales:
+												<a href="#" class="btn btn-default usrClr1" data-colorOne="" style="background-color:<%= @colorUno %>; color:white">Color primario</a>
+												<a href="#" class="btn btn-default usrClr2" data-colorTwo="" style="background-color:<%= @colorDos %>; color:white">Color secundario</a>
+												<hr>
+												<div id="tblCls" style="height:350px;overflow:scroll;">
+													Seleccionar otra combinacion:
+													<table class="table table-condensed">
+														<thead>
+															<th>#</th>
+															<th>Color primario</th>
+															<th>Color secundario</th>
+															<th></th>
+														</thead>
+														<tbody class="clsTbl"></tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% if current_user.role_id == 1 || current_user.role_id == 2 %>
+						<div class="panel-footer">
+							<a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="fa fa-envelope-o fa-1"></i></a>
+							<span class="pull-right">
+								<a data-original-title="Editar informacion" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="fa fa-pencil-square-o fa-1"></i></a>
+								<a data-original-title="Desactivar cuenta de usuario" data-toggle="tooltip" type="button" class="btn btn-sm btn-info"><i class="fa fa-power-off fa-1"></i></a>
+								<a data-original-title="Eliminar usuario" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="fa fa-times fa-1"></i></a>
+							</span>
+						</div>
+					<% else %>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="divLog" class="dshBox divVar" hidden>
+	<h3>Historial de actividades</h3>
+	<hr style="border-top: 1px solid #ccc;">
+	<div class="divLogOpts">
+		<label>Por usuario:</label>
+		<select id="slctUsr" class='select'>
+			<option value="">Seleccione..</option>
+		</select>
+		<label>Por accion:</label>
+		<select id="slctActn" class="select">
+			<option value="">Seleccione..</option>
+		</select>
+		<label>Fecha inicial:</label>
+		<input type="date" id="startDate">
+		<label>Fecha limite:</label>
+		<input type="date" id="endDate">
+		<input type="button" id="btnLog" class="btn btn-sm btn-default" value="Buscar">
+	</div>
+	<div class="logTbl">
+		<table id="tblActLog" class="table table-hover">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Fecha de evento</th>
+					<th>Autor</th>
+					<th>Detalle</th>
+					<th>Ubicaci&#243;n</th>
+				</tr>
+			</thead>
+			<tbody class="tblDataLog"> 
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="divCol" class=" divVar" hidden>
+	<form class="form-inline">
+		<div class="form-group">
+			<label>Color 1:</label>
+			<a href="#" class="btn btn-default" data-colorOne="">Color primario</a>								
+			<label>Color 2:</label>
+			<a href="#" class="btn btn-default" data-colorTwo="">Color secundario</a>
+			<button type="submit" class="btn btn-default">Guardar</button>
+		</div>
+		
+	</form>
+	<table class="table table-condensed">
+		<thead>
+			<th>Color 1</th>
+			<th>Color 2</th>
+			<th>Usuario</th>
+			<th>Asignado</th>
+		</thead>
+		<tbody class="tblBdyColor"></tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+	$(document).on("ready",function(){
+
+		$("#dashInfo").on("click",function(){
+			$.ajax({
+				url:"/log/colorList",
+				type:"get",
+				data:'json',
+				contentType:"application/json; charset-UTF8",
+				success: function(resp){
+					$(".tblBdyColor").empty();
+					var tr = "";
+					$(resp).each(function(i,e){
+						tr += "<tr><td style='background-color:" + e.color + "; color:white;'>" + e.color + "</td><td style='background-color:" + e.colorsec + "; color:white;'>" + e.colorsec + "</td><td>" + e.nombre + " " + e.apaterno + "</td><td>" + e.used + "</td></tr>"
+					})
+					$(".tblBdyColor").append(tr);
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error)
+				}
+			})
+		});
+
+		$("#btnUsrs").on("click", function(){
+			var status = $("#slctSt option:selected").val();
+			var role = $("#slctRl option:selected").val();
+
+			var data = { status: status, role: role}
+			$.ajax({
+				url:"/log/GetUsersByStatus",
+				type:"POST",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					var cnt = 1, tr = "";
+					$(".tblDataUsrs").empty();
+					$(resp).each(function(i,e) {
+
+						var roles = ["Administrador","Gerente","Asesor","Recepcion"];
+						if(e.rol == 1)
+							rol = roles[0]
+						else if(e.rol == 2)
+							rol = roles[1]
+						else if(e.rol == 3)
+							rol = roles[2]
+						else if(e.rol == 4)
+							rol = roles[3]
+
+						if(e.status == 2)
+							status = "<td><span class='label label-success'>Activo</span></td>";
+						else if(e.status == 1)
+							status = "<td><span class='label label-danger'>Inactivo</span></td>";
+						else 
+							status = "<td><span class='label label-warning'>Pendiente</span></td>";
+
+
+						tr += "<tr data-usr='" + e.id + "'><td>" + cnt + "</td><td>" + e.nombre + " " + e.apaterno + "</td><td>" + e.email + "</td><td>" + e.telefono + "</td><td>" + rol + "</td><td>" + moment(e.fechaIng).format("DD-MM-YYYY") + "</td>" + status + "<td>" + e.ip + "</td><td><a class='btn btn-success btn-xs' href='#'><span class='fa fa-check fa-1'></span></a> <a class='btn btn-info btn-xs' href='#'><span class='fa fa-pencil-square-o fa-1'></span></a> <a class='btn btn-warning btn-xs' href='#'><span class='fa fa-ban fa-1'></span></a> <a href='#' class='btn btn-danger btn-xs'><span class='fa fa-times fa-1'></span></a></td></tr>";
+
+						cnt++;
+					});
+
+					$(".tblDataUsrs").append(tr);
+				}, error: function(xhr, status, error){
+					console.log(xhr);
+					alert(error)
+				}
+			})
+		})
+
+		$.ajax({
+			type: "get",
+			url: "/log/GetLogActions",
+			dataType: "json",
+			contentType: "application/json",
+			success: function(resp){
+				var opt = "";
+				$(resp).each(function(i,e){
+					opt += "<option value='" + e.id + "'>" + e.accion + "</option>"
+				})
+				$("#slctActn").append(opt);
+			}, error: function(xhr,status,error){
+               	console.log(xhr);
+            	alert(error);
+            }
+		})
+
+		$.ajax({
+			type: "get",
+			url: "/log/GetUsersLog",
+			dataType: "json",
+			contentType: "application/json",
+			success: function(resp){
+				var opt = "";
+				$(resp).each(function(i,e){
+					opt += "<option value='" + e.id + "'>" + e.nombre + " " + e.apaterno + "</option>"
+				})
+				$("#slctUsr").append(opt);
+				$("#slctUsrEdt").append(opt);
+			}, error: function(xhr,status,error){
+               	console.log(xhr);
+            	alert(error);
+            }
+		});
+
+		$.ajax({
+			url:"/log/colorList",
+			type:"get",
+			data:'json',
+			contentType:"application/json; charset-UTF8",
+			success: function(resp){
+				$(".clsTbl").empty();
+				var opt = "", cnt = 1;
+				$(resp).each(function(i,e){
+					opt += "<tr><td>" + cnt + "</td><td style='background-color:" + e.color1 + "; color:white; text-align:center;'>" + e.color1 + "</td><td style='background-color:" + e.color2 + "; color:white;text-align:center;'>" + e.color2 + "</td><td><a data-color='" + e.id + "' data-original-title='Asignar colores' data-toggle='tooltip' type='button' class='btn btn-sm btn-success btnClr'><i class='fa fa-check fa-1'></i></a></td></tr>"
+					cnt++;
+				});
+				$(".clsTbl").append(opt);
+			}, error: function(xhr,status,error){
+				console.log(xhr);
+				alert(error)
+			}
+		});
+
+		GetUsersCaseTypes(null,$("#casesTbl"));
+
+		function GetUsersCaseTypes(usr,tbl){
+			var usr = usr;
+			var data = { usr: usr };
+
+			$.ajax({
+				url: "/log/GetUserCaseTypes",
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					var tr = "", cnt = 1;
+					$(tbl).empty();
+					$(resp).each(function(i,e){
+						tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1' ></span> Desasignar</a></td></tr>"
+						cnt++;
+					})
+					$(tbl).append(tr); 
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error)
+				}
+			});
+		}
+
+	
+		$.ajax({
+			url: "/log/GetAllCaseTypes",
+			type:"GET",
+			dataType:"json",
+			contentType:"application/json; charset-UTF8",
+			success:function(resp){
+				var opt = "";
+				$(resp).each(function(i,e){
+					opt += "<option value='" + e.id + "'>" + e.tipoCaso + "</option>";
+				})
+				$("#slctCase").append(opt);
+			}, error:function(xhr,status,error){
+				console.log(xhr)
+				alert(error)
+			}
+		});
+
+		$("#btnAsignar").on("click", function(e){
+			e.preventDefault();
+			var task = $("#slctCase option:selected").val();
+			var user = $("#slctUsrEdt option:selected").val();
+			var data = { task: task, user: user }
+
+			$.ajax({
+				type: "POST",
+				url: "/log/SetUserTask",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					if(resp == 1){
+						alert("El usuario ya cuenta con la tarea que se le intenta asignar.")
+					}else{
+						$("#casesTbl").empty();
+						var tr = "", cnt = 1;
+						$(resp).each(function(i,e){
+							tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
+							cnt++;
+						})
+						$("#casesTbl").append(tr);
+					}
+				}, error:  function(xhr,status,error){
+					console.log(xhr);
+					alert(error);
+				}
+			})
+		});
+
+		$("#slctUsrEdt").on("change", function(){
+			var usr = $(this).val()
+			var data = { user: usr };
+
+			$.ajax({
+				url: "/log/GetUserInformation",
+				type:"POST",
+				dataType:"json",
+				contentType:"application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					
+					$(resp).each(function(i,e){
+						$(".usrName").text(e.nombre + " " + e.apaterno);
+						$(".usrEmail").text(e.email)
+						$(".usrTel").text(e.telefono)
+						$(".lstSsn").text(moment(e.fechaSsn).format("DD-MM-YYYY hh:mm:ss a"))
+						$(".lstLtn").text(e.ip)
+						$(".usrClr1 ").css({ "background-color":'"' + e.color1 + '"' });
+						$(".usrClr2 ").css({ "background-color":'"' + e.color2 + '"' });
+					});
+
+					GetUsersCaseTypes(usr,$("#casesTbl"));
+					
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error);
+				}
+			})
+
+		});
+
+		$("body").on("click", ".btnDesa", function(e){
+			e.preventDefault();
+			var caseType = $(this).attr("data-case");
+			var usr = $("#slctUsrEdt option:selected").val();
+			var data = { ctype : caseType, user: usr }
+
+			$.ajax({
+				url:"/log/TaskRemove",
+				type: "post",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					$("#casesTbl").empty();
+					var tr = "", cnt = 1;
+					$(resp).each(function(i,e){
+						tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
+						cnt++;
+					})
+					$("#casesTbl").append(tr);
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error)
+				}
+			})
+
+		})
+
+		$("body").on("click",".btnClr",function(){
+			var color = $(this).attr("data-color");
+			var data = { color: parseInt(color) }
+
+			//alert(data.color)
+			$.ajax({
+				url:"/users/ChangeUserColor",
+				type: "post",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					window.location.href = '/users/variety';
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error)
+				}
+			});
+		})
+
+
+		$(".lnkNav").on("click",function(){
+			var crtDiv = $(this).attr("data-div")
+			$("#" + crtDiv).removeClass("dshBox");
+			$(".dshBox").fadeOut(300);
+			$("#" + crtDiv).addClass("dshBox");
+			$("#" + crtDiv).fadeIn(300);
+		})
+
+		$("#btnLog").on("click", function(){
+			var usr = $("#slctUsr option:selected").val();
+			var act = $("#slctActn option:selected").val();
+			var dt1 = $("#startDate").val();
+			var dt2 = $("#endDate").val();
+
+			var data = { user_id: usr, action_id: act, date1: dt1, date2: dt2 }
+			//console.log(data)
+
+			$.ajax({
+				type: "POST",
+				url: "/log/GetFullLog",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){ 
+
+					console.log(data)
+					console.log(resp)
+					$(".tblDataLog").empty();
+					
+					var tr = "", cnt = 1;
+					$(resp).each(function(i,e){
+						tr += "<tr><td scope='row'>" + cnt + "</td><td>" + moment(e.fechaLog).format("DD/MM/YYYY HH:mm:ss a") + "</td><td>" + e.nombre + " " + e.apaterno + "</td><td>" + e.detalles + "</td><td>" + e.ubicacion + "</td></tr>";
+						cnt++;
+					});
+					$(".tblDataLog").append(tr);
+					
+				}, error: function(xhr,status,error){
+	               		console.log(xhr);
+	            		alert(error);
+	            }
+			});
+		})
+
+		$("#btnVac").on("click", function(){
+			var start = moment($("#vacStrt").val()).format("YYYY-MM-DD");
+			var end = moment($("#vacEnd").val()).format("YYYY-MM-DD");
+			var comment = $("#txtCmnt").val();
+			
+			var data = { start:start, end:end, comment: comment };
+
+			//alert(start + ' ' + end + ' ' + comment)
+
+			$.ajax({
+				url: "/log/SetVacationPeriod",
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json; charset-UTF8",
+				data: JSON.stringify(data),
+				success: function(resp){
+					console.log(resp)
+				}, error: function(xhr,status,error){
+					console.log(xhr);
+					alert(error);
+				}
+			})
+
+		});
+
+		var panels = $('.user-infos');
+	    var panelsButton = $('.dropdown-user');
+	    panels.hide();
+
+	    //Click dropdown
+	    panelsButton.click(function() {
+	        //get data-for attribute
+	        var dataFor = $(this).attr('data-for');
+	        var idFor = $(dataFor);
+
+	        //current button
+	        var currentButton = $(this);
+	        idFor.slideToggle(400, function() {
+	            //Completed slidetoggle
+	            if(idFor.is(':visible'))
+	            {
+	                currentButton.html('<i class=""></i>');
+	            }
+	            else
+	            {
+	                currentButton.html('<i class=""></i>');
+	            }
+	        })
+	    });
+
+	    $('[data-toggle="tooltip"]').tooltip();
+
+	    /*$('button').click(function(e) {
+	        e.preventDefault();
+	        alert("This is a demo.\n :-)");
+	    });*/
+	});
+</script>

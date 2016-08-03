@@ -1,0 +1,359 @@
+<div class="testbox">
+    <div class="x-cross"><i class="fa fa-times-circle fa-2x"></i></div>
+    <h1>Crear citas</h1>
+    <%= form_for("/appointment/nuevaCita", method: :post) do %>
+        <div class="accounttype">
+            <%= radio_button "account", "None", true, id: "radioOne" %>
+            <%= label_tag "radioOne", "1ra vez", class: "radio", :data => { :val => 1 } %>
+            <%= radio_button "account", "None", true, id: "radioTwo"  %>
+            <%= label_tag "radioTwo", "Cuestionario", class: "radio", :data => { :val => 2 } %>
+            <%= radio_button "account", "None", true, id: "radioThree"  %>
+            <%= label_tag "radioThree", "Cliente", class: "radio", :data => { :val => 3 }%>
+        </div>
+        
+        <%= select_tag "slctTipoCita", options_from_collection_for_select(@tipocasos, "id", "tipoCaso"), class: "select frmAppSlct", prompt: "Seleccione.." %>
+        <%= select_tag "slctAbogado", class: "frmAppSlct", prompt: "Seleccione.." %>
+        <a class="buttonse" id="btnSearch"><i class="fa fa-search"></i></a>
+
+        <label class="iconForm" for="name"><i class="fa fa-user" aria-hidden="true"></i></label>
+        <div class="nombre">
+            <%= text_field "name", nil, placeholder: "Nombre(s)", id: "name", class: "frmApp" %>
+            <%= text_field "apaterno", nil, placeholder: "A. Paterno", id: "apaterno", class: "frmApp" %>
+            <%= text_field "amaterno", nil, placeholder: "A. Materno", id: "amaterno", class: "frmApp" %>
+        </div>
+
+        <label class="iconForm" for="email"><i class="fa fa-envelope" aria-hidden="true"></i></label>
+        <%= text_field "email", nil, placeholder: "Correo", id: "email", class: "frmApp" %>
+        <label class="iconForm lblAdrs" for="direccion"><i class="fa fa-location-arrow" aria-hidden="true"></i></label>
+        <%= text_field "direccion", nil, placeholder: "Direccion", id: "direccion", class: "frmApp" %>
+        <label class="iconForm" for="name"><i class="fa fa-phone" aria-hidden="true"></i></label>
+        <%= text_field "telefono", nil, placeholder: "Telefono", id: "telefono", class: "frmApp" %>
+        <label class="iconForm" for="numeropersona"><i class="fa fa-users" aria-hidden="true"></i></label>
+        <%= text_field "personas", nil, placeholder: "Personas", id: "personas", class: "frmApp" %>
+        <%= text_area "comentario", nil, placeholder: "Comentario", id: "textarea" %>
+        <a class="buttons" id="btnRegistro">Registrar</a>
+    <%end%>
+</div>
+
+<div class="modal-body" hidden="hidden">
+    <div class="x-cross"><i class="fa fa-times-circle fa-2x"></i></div>
+    <div class="cltData-form">
+        <div class="appInfo">
+            <h3>Información de la cita.</h3>
+            <hr>
+            <p><b>Nombre del cliente:   </b><span class="cltName"></span></p>
+            <p><b>Fecha:  </b><span class="cltDate"></span> <b>Hora:   </b><span class="cltHora"></span></p>
+            <p><b>Tipo de caso:   </b><span class="cltCase"></span></p>
+            <p><b>Teléfono:   </b><span class="cltPhone"></span> <b>Correo:   </b><span class="cltEmail"></span></p>
+            <hr>
+            <p><b>Comentario:   </b><span class="cltComment"></span></p>
+            <p><b>Asesor: </b><span class="cltlawyer"></span></p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-body-edit" hidden="hidden">
+    <div class="x-cross"><i class="fa fa-times-circle fa-2x"></i></div>
+    <div class="cltData-form-edit">
+        <div class="appInfo-edit" data-app="">
+            <h3>Información de la cita.</h3>
+            <hr>
+            <p><b>Nombre del cliente:   </b><span class="cltName"></span></p>
+            <p><b>Fecha:  </b><input type="date" class="nwDate" ><span class="cltDate"></span> <b>Hora: </b>
+              <select id="slctHour-Edit">
+                  <option value="10:30:00">10:30</option>
+                  <option value="11:00:00">11:00</option>
+                  <option value="11:30:00">11:30</option>
+                  <option value="12:00:00">12:00</option>
+                  <option value="12:30:00">12:30</option>
+                  <option value="13:00:00">13:00</option>
+                  <option value="13:30:00">13:30</option>
+                  <option value="14:00:00">14:00</option>
+                  <option value="14:30:00">14:30</option>
+                  <option value="15:00:00">15:00</option>
+                  <option value="15:30:00">15:30</option>
+                  <option value="16:00:00">16:00</option>
+                  <option value="16:30:00">16:30</option>
+                  <option value="17:00:00">17:00</option>
+                  <option value="17:30:00">17:30</option>
+                  <option value="18:00:00">18:00</option>
+                  <option value="18:30:00">18:30</option>
+              </select>
+            </p>
+            <p><b>Tipo de caso:  </b><span class="cltCase"></span></p>
+            <p><b>Teléfono:  </b><span class="cltPhone"><input type="text"></span> <b>Correo:   </b><span class="cltEmail"><input type="text"></span></p>
+            <hr>
+            <p><b>Comentario:   </b><span class="cltComment"></span></p>
+            <p><b>Asesor: </b>
+                <%= select_tag "slctEmp-Edit", options_from_collection_for_select(@abogados, "id", "full_name"), class: "select Abogado", prompt: "Seleccione.." %>
+            </p>
+            <a class="buttons" id="btnEditConfirm">Guardar</a>
+        </div>
+    </div>
+</div>
+
+<div class="optMenuApp">
+    <ul class="lstMenu">
+        <li class="lstOpt btnInfo" id="btnInfo">Informacion</li>
+        <li class="lstOpt btnEdit" id="btnEdit">Modificar cita</li>
+        <li class="lstOpt btnAttnd" id="btnAttnd">Asistencia</li>
+        <li class="lstOpt btnCancel" id="btnCancel">Cancelar cita</li>
+    </ul>
+</div>
+
+<div class="modal-attend" hidden="hidden">
+    <div class="x-cross"><i class="fa fa-times-circle fa-2x"></i></div>
+    <div class="appAttend">
+        <h4>Confirmacion de cita</h4>
+        <p>Asistio el cliente <span  id="txtAttnd"></span> a la cita programada?</p>
+        <hr />
+        <input class='btn btn-md btn-success btnAttend' data-opt="1" type="button" value='Atendio'/>
+        <input class='btn btn-md btn-danger btnDnAttend' data-opt="2" type="button" value='No atendio'/>
+    </div>
+</div>
+
+<script>
+
+    jQuery.fn.center = function(){
+        this.css("position","fixed");
+        this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+        this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+
+        return this;
+    }
+
+    $(document).on("keyup", function(e){
+        if(e.keyCode === 27){
+            $(".optMenuApp").css({"display":"none"});
+            $(".testbox").css({"display":"none"});
+        }
+    });
+
+    $(".ajaxLoad").center();
+
+    $(".frmApp").prop("disabled",true);
+    $(".frmAppSlct").prop("disabled",true);
+
+    $("#btnSearch").on("click", function(){
+        var optSel = $(".typeSelected").attr("data-val");
+        if(optSel == null)
+            alert("Debe seleccionar alguna de las opciones.");
+        else if(optSel == 2 || optSel == 3){
+            var name = $("#name").val();
+            var aPaterno = $("#apaterno").val();
+            var aMaterno = $("#amaterno").val();
+            var email = $("#email").val();
+            var tel = $("#telefono").val();
+            var idCase = $("#numCase").val();
+
+            var data = {name: name, apaterno:aPaterno, amaterno: aMaterno, email:email, telefono: tel, numCase: idCase };
+
+            $.ajax({
+                url: "/appointment/searchCustomer",
+                type: "POST",
+                contentType: "application/json; charset-utf8",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function(resp){
+                    console.log(resp)
+                }, error: function(xhr,status,error){
+                    console.log(xhr);
+                    alert(error);
+                }
+            });
+
+        }
+    });
+
+    $("body").on("click", ".radio", function(){
+        $(".radio").removeClass("typeSelected");
+        $(this).addClass("typeSelected")
+
+        var opt = $(".typeSelected");
+        var num = opt.attr("data-val")
+
+        if(num == 1){
+            hideFields();
+            $(".frmAppSlct").prop("disabled",false);
+            $(".frmApp").prop("disabled",false);
+        }else if(num == 2){
+            $(".frmApp").prop("disabled",false);
+            $(".frmAppSlct").prop("disabled",false).prop("selectedIndex",0);
+            hideFields();
+        }else if(num == 3){
+            $(".frmApp").prop("disabled",false);
+            $("#direccion").prop("hidden",true);
+            $("#personas").prop("disabled",true)
+            $(".frmAppSlct").prop("disabled",false).prop("selectedIndex",0);
+            $(".lblAdrs").hide();
+
+            var caseNumInput = "<label class='iconForm addNumCase' for='numCase'><i class='fa fa-hashtag' aria-hidden='true'></i></label><input style='margin-left:0px; margin-right:5px;' type='text' class='frmApp' id='numCase' placeholder='123456' autocomplete='off'>";
+
+            $(caseNumInput).insertAfter(".lblAdrs");
+        }
+    });
+
+    function hideFields(){
+        $(".addNumCase, #numCase").remove();
+        $(".lblAdrs").show();
+        $("#direccion").prop("hidden",false);
+        $("#direccion").prop("disabled",false);
+        $("#personas").prop("disabled",false);
+    }
+    
+    var colorDos = $("[name='colorCalen2']").attr("id");
+    $(".lstOpt").on("mouseover", function(){
+        $(this).css({"background-color": '"' + colorDos +'"'});
+    });
+
+    $(".lstOpt").on("mouseleave", function(){
+        $(this).css({"background-color": 'transparent'});
+    });
+
+    $(".btnInfo, .btnEdit, .btnCancel, .btnAttnd").on("click", function(){
+        var $this = $(this);
+        $this.parent().parent(".optMenuApp").css({"display":"none"});;
+    });
+
+    $("#btnInfo").on("click", function(){
+        var cita = $(".appSelected");
+        var modalAppoint = $(".modal-body");
+
+        modalAppoint.find(".cltName").text(cita.find(".recCltName").text());
+        modalAppoint.find(".cltDate").text(cita.find(".recCltDate").text());
+        modalAppoint.find(".cltHora").text(cita.find(".recCltHour").text());
+        modalAppoint.find(".cltCase").text(cita.find(".recCltCase").text());
+        modalAppoint.find(".cltPhone").text(cita.find(".recCltTel").text());
+        modalAppoint.find(".cltEmail").text(cita.find(".recCltMail").text());
+        modalAppoint.find(".cltComment").text(cita.find(".recCltComment").text());
+        modalAppoint.find(".cltlawyer").text(cita.find(".recCltLawyer").text());
+
+        modalAppoint.fadeIn(500);
+        capaModalAppear(modalAppoint)
+    });
+
+    $("#btnEdit").on("click", function(){
+        var cita = $(".appSelected");
+        var modalEdition = $(".modal-body-edit");
+
+        modalEdition.find(".cltName").text(cita.find(".recCltName").text());
+        modalEdition.find(".cltCase").text(cita.find(".recCltCase").text());
+        modalEdition.find(".cltPhone").text(cita.find(".recCltTel").text());
+        modalEdition.find(".cltEmail").text(cita.find(".recCltMail").text());
+        modalEdition.find(".cltComment").text(cita.find(".recCltComment").text());
+        modalEdition.find(".appInfo-edit").attr("data-app",cita.find(".recCltName").attr("data-clt"));
+
+        modalEdition.fadeIn(500);
+        capaModalAppear(modalEdition);
+    });
+
+    $("#btnAttnd").on("click", function(){
+        var cita = $(".appSelected");
+        var modalAttend = $(".modal-attend");
+        var appId = $(cita).find("recCltName").attr("data-clt");
+
+        var nmClt = cita.find(".recCltName").text();
+        $("#txtAttnd").text(nmClt);
+
+        modalAttend.fadeIn(500);
+        capaModalAppear(modalAttend);
+    });
+
+    $(".btnAttend, .btnDnAttend").on("click", function(){
+        var appId = $(".appSelected").find(".recCltName").attr("data-clt");
+        var opt = $(this).attr("data-opt");
+
+        if(opt == 1)
+            opt = true;
+        else if( opt == 2)
+            opt = false;
+
+        var data = { id: appId, opt: opt };
+        
+        $.ajax({
+            url: "/appointment/Attendance",
+            type: "POST",
+            contentType: "application/json; charset-utf8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function(resp){
+                if(resp.attendance == false)
+                    alert("Cliente no atendio a la cita");
+                else
+                    alert("Cliente atendio a la cita.");
+                
+            }, error: function(xhr,status,error){
+                console.log(xhr);
+                alert(error);
+            }
+        })
+    });
+
+    $(".x-cross").on("click", function(){
+        $(this).parent().fadeOut(500);
+        $("#capaModal").fadeOut(500, function(){
+            $(this).remove();
+        })
+    });
+
+    $("#slctAbogado").on("change", function(){
+        var sltdLyr = $("#slctAbogado option:selected").val()
+        
+    });
+
+    $("#slctAbogado").addClass("select Abogado").append("<option> Seleccione.. </option>")
+    $("#slctTipoCita").on("change", function(){
+
+        var optSel = $(".typeSelected").attr("data-val")
+        if(optSel == 1){
+            alert("Es cita de primera vez.");
+            $("#slctTipoCita").prop("selectedIndex",1).prop("disabled",true);
+        }
+        
+        var idSlctd = $(this).val();
+        var data = { idCstype: idSlctd };
+
+        $.ajax({
+            url: "/appointment/getAssistant",
+            type: "POST",
+            contentType: "application/json; charset-utf8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function(resp){
+                $("#slctAbogado").empty();
+                console.log(resp)
+                var opt = "";
+                $(resp).each(function(i,e){
+                    opt += "<option value='" + e.id + "''>" + e.nombre + " " + e.apaterno + "</option>";
+                });
+                $("#slctAbogado").append(opt);
+            }, error: function(xhr,status,error){
+                console.log(xhr);
+                alert(error);
+            }
+        });
+    });
+
+    function capaModalAppear(modalAppoint){
+          var capaModal = $("<div>").attr("id","capaModal");
+
+          capaModal.css({
+              opacity: 0.80,
+              "z-index": 23,
+              width: doc.width(),
+              height: doc.height(),
+              backgroundColor: "#E7E7E7",
+              position: "fixed",
+              top: "0px",
+              left: "0px",
+              display: "none",
+              overflow: "hidden"
+          }).appendTo("body").fadeIn(500).on("click", function(){
+              modalAppoint.fadeOut(500);
+              capaModal.fadeOut(500, function(){
+                  capaModal.remove();
+              });
+          });
+      }
+
+</script>

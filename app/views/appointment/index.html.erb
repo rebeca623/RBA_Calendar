@@ -1,0 +1,713 @@
+<%= render "partials/mainNav" %>
+<%= render "partials/asideCalendar" %>
+<%= render "partials/newAppointment" %>
+
+<p hidden id="mainView">2</p>
+<div class="calendarioMain">
+    <div class="rectup" style="background: <%= @colorDos %>;">
+        <div class="arr left" id="prevWeek"></div>
+        <div class="nameMonth">Semanal</div>              
+        <div class="arr right" id="nextWeek"></div>
+    </div>
+    <div class="rectdw" style="background: <%= @colorUno %>;"> </div>
+    <div class="rectdias" >
+        <table class="Mesdias">
+            <thead id="encabezado">
+                <tr id="rowDays"></tr> 
+            </thead>
+        </table> 
+    </div>
+    
+    <div>
+        <table class="horasCalen"></table>              
+    </div>
+
+    <div class="citasCalen">
+        <table class="tblMainDays"></table>              
+    </div>
+</div>
+
+
+<%= render "partials/generalScripts" %>
+<script>
+  $(document).on("ready", function(){
+
+      $(".ajaxLoad, .loadModal").show();
+
+      var trDays = $("#rowDays");
+      var fecha = new Date();
+      var currentMonth = fecha.getMonth() + 1;
+      var year = fecha.getFullYear();
+      var usrRol = $("#userRole").text();
+      var ventana = $(window);
+
+      //console.log(currentMonth + 1)
+
+      if ((year%100 != 0) && (year%4 == 0) || (year%400 == 0)){
+          totalFeb = 29;
+      }else{
+          totalFeb = 28;
+      }
+
+      var fstDay, lstDay;
+      var daysPerMonth = [ 0, 31, totalFeb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+      weekCalendar(trDays, daysPerMonth);
+      WeeklyAppointments(currentMonth, year, false);
+      getWeekAppointments(fstDay,lstDay);
+      CheckVacationsPeriod (usrRol,$(".tdDayApp"))
+
+      $("#btnRegistro").on("click", function(e){
+          e.preventDefault();
+
+          var tipoCliente, abogado, tipoCita, nombre, apaterno, amaterno, direccion, email, telefono, fecha, hora, numPersona, numCliente;
+
+          if($(".typeSelected").attr("data-val") == 1)
+            tipoCliente = 1;
+          else if($(".typeSelected").attr("data-val") == 2)
+            tipoCliente = 2;
+          else if($(".typeSelected").attr("data-val") == 3)
+                tipoCliente = 3;
+
+          tipoCita = $("#slctTipoCita").val();
+          abogado = $("#slctAbogado").val();
+          nombre = $("#name").val();
+          apaterno = $("#apaterno").val();
+          amaterno = $("#amaterno").val();
+          email = $("#email").val();
+          direccion = $("#direccion").val();
+          telefono = $("#telefono").val();
+          fecha = fechaCita + " " + horaCita ;
+          hora = horaCita;
+          numPersona = $("#personas").val();
+          comentario = $("#textarea").val();
+
+          var d = fecha + " " + hora;
+
+          $.ajax({
+              type: "POST",
+              url: "/appointment/nuevoCliente",
+              contentType: "application/json",
+              dataType: "json",
+              data: JSON.stringify({  client: { nombreClt: nombre, apaternoClt: apaterno, amaternoClt: amaterno, emailClt: email, direccion: direccion, telefonoClt: telefono }}),
+              success: function(resp){
+                  numCliente = resp.id;
+
+                  $.ajax({
+                      type: "POST",
+                      url: "/appointment/nuevaCita",
+                      contentType: "application/json",
+                      dataType: "json",
+                      data: JSON.stringify({  appointment: { numpersonas: numPersona, fecha: fecha, hora:hora, comentario: comentario, client_id:numCliente, user_id: abogado, case_type_id: tipoCita, tipoCita: tipoCliente }}),
+                      success: function(resp){
+                          if(resp == 1)
+                              alert("Aviso: Ya existe una cita en la fecha y hora seleccionadas para el usuario.")
+                          else{
+
+                              var m = moment(resp.hora).format("hh:mm a");
+                              $(".testbox").css({"display":"none"});
+                              $("#slctTipoCita").prop("selectedIndex",0);
+                              $("#slctAbogado").prop("selectedIndex",0);
+                              $(".frmApp").val("");
+                              $("#textarea").val("");
+
+                              WeeklyAppointments(currentMonth,year, true);
+                              getWeekAppointments();
+                          }
+                          
+
+                      }, error: function(xhr,status,error){
+                          console.log(xhr);
+                          alert(error);
+                      }
+                  });
+              }, error: function(xhr,status,error){
+                  console.log(xhr);
+                  alert(error);
+              }
+          });
+      });
+      
+      $("body").on("click", ".lstLawyer", function(){
+          var usr = $(this).attr("data-usr");
+
+          if(usrRol == 4){
+              var apps = $(".childtdcitas");
+              var usr = $(this).attr("data-usr");
+              
+              apps.show();
+              $(apps).each(function(i,e){
+                  var app = $(e);
+                  if(app.find(".recCltLawyer").attr("data-lyr") != usr)
+                      app.hide();
+              })
+          }else if(usrRol == 2){
+
+              var fstDay = $(".cita_1").children(":nth-child(1)").data("fecha")
+              var lstDay = $(".cita_1").children(":nth-child(7)").data("fecha")
+              var data = { lawyerId:usr, fecha1: fstDay, fecha2: lstDay };
+
+              $.ajax({
+                  type: "POST",
+                  url: "/appointment/GetAssistantAppointments",
+                  contentType: "application/json; charset-utf8",
+                  dataType: "json",
+                  data: JSON.stringify(data),
+                  success: function(resp){
+                      var arrayColors = [];
+                      $.ajax({
+                          url: '/day/GetAllColors',
+                          type: "get",
+                          dataType: "json",
+                          contentType: "application/json; charset-utf8",
+                          success: function(respCol){
+                              $(respCol).each(function(i,e){
+                                  var auxId = e.id;
+                                  var auxColor = e.color;
+                                  var color = {auxId,auxColor};
+                                  arrayColors.push(color);
+                              });
+
+                              var aux;
+                              $(".tdcitas2").empty();
+
+                              $(resp).each(function(i,e){
+                                  var hora = moment(e.hora).format("HH:mm:ss");
+                                  var fecha = moment(e.fecha).format("YYYY-MM-DD");
+                                  var boxCita = "<div class='activeAppoint' style='z-index:40;' data-f='" + fecha + "' data-h='" + hora + "'><h3 class='cFullName'>" + e.nombreClt + " " + e.apaternoClt + "</h3><p class='cCaseType'>" + e.emailClt + "</p><p class='cTel'>" + e.telefonoClt + "</p><p hidden class='cEmail'>" + e.emailClt + "</p><p hidden='hidden' class='appComment'>" + e.comentario + "</p><p hidden class='cLawyer'>" + e.nombre + " " + e.apaterno + "</p><a id='aqui' class='btnComment'>Ver más</a></div>"
+
+                                  console.log(e)
+
+                                  $(arrayColors).each(function(idx,elem){
+                                      if(elem.auxId == e.color_id)
+                                          aux = elem.auxColor
+                                  });
+
+                                  var appHour = $('[data-hour="' + hora + '"]');
+                                  var td = $(appHour).find('[data-fecha="' + fecha + '"]');
+
+                                  $(td).append(boxCita)
+
+                                  $(".tdAppLaw2").each(function(i,e){
+                                      var app = $(e);
+                                      if(app.find(".recCltAttnd").text() == "false")
+                                          app.css({ "background-color":"#C7C5C5" });
+                                      else if(app.find(".recCltAttnd").text() == "true")
+                                          app.css({ "background-color":"#706F6F" });
+                                  });
+                              });
+                          }, error: function(xhr,status,error){
+                              console.log(xhr);
+                              alert(error);
+                          }
+                      });
+                  }
+              });
+          }
+      });
+      
+      function getWeekAppointments(){
+
+          var fstDay = $(".cita_1").children(":nth-child(1)").data("fecha")
+          var lstDay = $(".cita_1").children(":nth-child(7)").data("fecha")
+          var data = { fecha1: fstDay, fecha2: lstDay };
+
+          $.ajax({
+              type: "GET",
+              url: "/appointment/GetAppointments",
+              contentType: "application/json",
+              dataType: "json",
+              data: data,
+              success: function(resp){
+                  var arrayColors = [];
+                  $.ajax({
+                      url: '/day/GetAllColors',
+                      type: "get",
+                      dataType: "json",
+                      contentType: "application/json; charset-utf8",
+                      success: function(respCol){
+                          $(respCol).each(function(i,e){
+                              var auxId = e.id;
+                              var auxColor = e.color;
+                              var color = {auxId,auxColor};
+                              arrayColors.push(color);
+                          });
+
+                          var aux;
+                          $(resp).each(function(i,e){
+                              var hora = moment(e.hora).format("HH:mm:ss");
+                              var fecha = moment(e.fecha).format("YYYY-MM-DD");
+                              var boxCita = "<div class='activeAppoint' style='z-index:40;' data-f='" + fecha + "' data-h='" + hora + "'><h3 class='cFullName'>" + e.nombreClt + " " + e.apaternoClt + "</h3><p class='cCaseType'>" + e.emailClt + "</p><p class='cTel'>" + e.telefonoClt + "</p><p hidden class='cEmail'>" + e.emailClt + "</p><p hidden='hidden' class='appComment'>" + e.comentario + "</p><a id='aqui' class='btnComment'>Ver más</a></div>"
+
+                              $(arrayColors).each(function(idx,elem){
+                                  if(elem.auxId == e.color_id)
+                                      aux = elem.auxColor
+                              });
+
+                              if(usrRol != 4){
+                                  var appHour = $('[data-hour="' + hora + '"]');
+                                  var td = $(appHour).find('[data-fecha="' + fecha + '"]');
+
+                                  $(td).append(boxCita)
+                              }
+                              else{
+
+                                  var appHour = $('[data-hour="' + hora + '"]');
+                                  var td = $(appHour).find('[data-fecha="' + fecha + '"]');
+                                  var tablita = "<tr class='childtdcitas'><td class='tdAppLaw2' style='background-color:" + aux + "'><p class='recCltName' data-clt='" + e.id + "'>" + e.nombreClt + " " + e.apaternoClt + "</p><p class='cTypeLaw'><span class='recCltCase'>" + e.tipoCaso + "</span> - <span class='recCltLawyer' data-lyr='" + e.user_id + "'>" + FisrtNameFix(e.nombre) + " " + e.apaterno + "</span></p><p class='recCltMail' hidden>" + e.emailClt + "</p><p class='recCltTel' hidden>" + e.telefonoClt + "</p><p hidden><span class='recCltComment'>" + e.comentario + "</span><span class='recCltDate'>" + fecha + "</span><span class='recCltHour' hidden>" + hora +"</span></p><span class='recCltAttnd' hidden>" + e.attendance + "</span></td></tr>";
+                                  $(td).find(".tbdAddApp").append(tablita);
+
+                              }
+
+                              $(".tdAppLaw2").each(function(i,e){
+                                  var app = $(e);
+                                  if(app.find(".recCltAttnd").text() == "false")
+                                      app.css({ "background-color":"#C7C5C5" });
+                                  else if(app.find(".recCltAttnd").text() == "true")
+                                      app.css({ "background-color":"#706F6F" });
+                              });
+
+                              var tdCitas = $(".tbdAddApp");
+                              $(tdCitas).each(function(i,e){
+                                  if($(e).children("tr").length > 4){
+                                      var trChild = $(e).children("tr");
+                                      $(trChild).each(function(ind,elem){
+                                          var appTd = $(elem).children(".tdAppLaw2");
+                                          $(appTd).each(function(index,element){
+                                              $(element).find(".cTypeLaw").addClass("removal");
+                                              $(element).find(".cTypeLaw").attr("hidden",true);
+                                              $(element).css({ "height":"20px" });
+                                          });
+                                      });
+                                  }
+                              });
+                          });
+                          
+                      }, error: function(xhr,status,error){
+                          console.log(xhr);
+                          alert(error);
+                      }
+                  })
+              }, error: function(xhr,status,error){
+                  console.log(xhr);
+                  alert(error);
+              }
+          }).done(function(){
+              $(".removal").attr("hidden", true);
+              $(".removal").css({"height":"20px"});
+              $(".ajaxLoad, .loadModal").hide();
+          })
+      }
+
+      $(document).on("keyup", function(e){
+          if(e.keyCode === 27){
+              $(".optMenuApp").css({"display":"none"});
+              $(".testbox").css({"display":"none"});
+          }
+      });
+
+      $("body").on("click", ".tdAppLaw2", function(e){
+          $(".tdAppLaw2").removeClass("appSelected");
+
+          $(this).addClass("appSelected");
+          var menu = $(".optMenuApp");
+          menu.css({"display":"block","top": e.pageY + "px", "left": e.pageX + "px"});
+          var retardo = setTimeout(function(){
+              menu.css({"display":"none"});
+          }, 2000);
+          clearTimeout(retardo);
+      });
+
+      $("body").on("click", "#btnEditConfirm", function(){
+          var editCita = $(".modal-body-edit");
+          var app = editCita.find(".appInfo-edit").attr("data-app");
+
+          var originalDate = editCita.find(".nwDate").val();
+          var newDate = moment(originalDate).format("YYYY-MM-DD");
+          var newHour = moment("2000-01-01 " + editCita.find("#slctHour-Edit").val()).format("YYYY-MM-DD HH:mm:ss");
+          var newLayer = editCita.find("#slctEmp-Edit").val();
+          var data = { id: app, fecha: newDate, hora: newHour, user_id: newLayer }
+
+          if(confirm){
+              $.ajax({
+                  type:"POST",
+                  url: "/appointment/update",
+                  contentType: "application/json",
+                  dataType: "json",
+                  data: JSON.stringify(data),
+                  success: function(resp){
+
+                      WeeklyAppointments(currentMonth,year,true);
+                      getWeekAppointments();
+
+                      editCita.fadeOut(500);
+                      $("#capaModal").fadeOut(500).remove();
+                      $("#slctEmp-Edit").prop("selectedIndex",0);
+
+                  console.log(resp)
+                  }, error: function(xhr,status,error){
+                      console.log(xhr);
+                      alert(error);
+                  }
+              })
+          }
+      });
+
+      $("#btnCancel").on("click", function(){
+          var cita = $(".appSelected");
+          var fecha = $(cita).find(".recCltDate").text();
+          var hora = $(cita).find(".recCltHour").text();
+          var app = $(cita).find(".recCltName").data("clt");
+
+          var mhour = moment("2000-01-01" + " " + hora).format("YYYY-MM-DD hh:mm:ss");
+          var data = { id: app }
+
+          if(confirm("Estas seguro de querer cancelar esta cita?")){
+              $.ajax({
+                  type: "POST",
+                  url: "/appointment/cancelAppointment",
+                  contentType: "application/json",
+                  dataType: "json",
+                  data: JSON.stringify(data),
+                  success: function(resp){
+                      WeeklyAppointments(currentMonth,year,true);
+                      getWeekAppointments();
+                  }, error: function(xhr,status,error){
+                     console.log(xhr);
+                     alert(error);
+                  }
+              });
+          }
+      });
+
+      $("body").on("click",".btnComment", function(){
+
+          var boton = $(this);
+          var comment = boton.siblings(".appComment").text();
+          var modalAppoint = $(".modal-body");
+
+          modalAppoint.find(".cltName").text(boton.siblings(".cFullName").text());
+          modalAppoint.find(".cltDate").text(boton.parent().data("f"));
+          modalAppoint.find(".cltHora").text(boton.parent().data("h"));
+          modalAppoint.find(".cltCase").text("Tipo de caso");
+          modalAppoint.find(".cltPhone").text(boton.siblings(".cTel").text());
+          modalAppoint.find(".cltEmail").text(boton.siblings(".cEmail").text());
+          modalAppoint.find(".cltComment").text(boton.siblings(".appComment").text());
+          modalAppoint.find(".cltlawyer").text(boton.siblings(".cLawyer").text());
+
+          if(boton.siblings(".cLawyer").text() == "")
+              modalAppoint.find(".cltlawyer").text($(".dropbtn").text());
+
+          modalAppoint.fadeIn(500)
+
+          capaModalAppear(modalAppoint);
+      });
+
+      $("#prevWeek").on("click", function(){
+
+          var fstDay = $(".cita_1").children(":nth-child(1)").data("fecha")
+          var nextCrrMonth = parseInt(fstDay.substr(5,2));
+
+          var auxFstDayWeek = $("#rowDays").children(":nth-child(1)").find(".dayNumber").text();
+          var daysTemp = [];
+          var daysLessThanOne = 0, daysThisMonth, currentMonthAux;
+
+          for(var i = 1; i < 8; i++){
+              daysTemp[i] = auxFstDayWeek - i;
+              if(daysTemp[i] < 1)
+                daysLessThanOne++;
+          }
+
+          if(daysLessThanOne > 0){
+              currentMonth = currentMonth - 1;
+              daysThisMonth = daysPerMonth[currentMonth];
+
+              currentMonthAux = currentMonth;
+              var aux = daysLessThanOne;
+              for(var i = 0; i < daysLessThanOne; i++){
+                  daysTemp[ 8 - aux] = daysThisMonth - i;
+                  aux--;
+              }
+          }
+
+          daysTemp = daysTemp.reverse();
+          $(".dayNumber").each(function(i,e){
+              $(e).text(OneDigitDates(daysTemp[i]));
+          })
+
+          var day = parseInt(fstDay.substr(8,2));
+
+          WeeklyAppointments(currentMonth, year, true);
+          getWeekAppointments();
+          CheckVacationsPeriod (usrRol,$(".tdDayApp"))
+
+          //console.log(currentMonth)
+
+      });
+
+      $("#nextWeek").on("click", function(){
+
+          var lstDay = $(".cita_1").children(":nth-child(7)").data("fecha")
+          var nextCrrMonth = parseInt(lstDay.substr(5,2));
+
+          var auxLstDayWeek = $("#rowDays").children(":nth-child(7)").find(".dayNumber").text();
+          var daysTemp = [];
+          var daysMoreThanOne = 0, currentMonthAux, daysThisMonth = daysPerMonth[currentMonth]
+
+          for(var i = 1; i < 8; i++)
+              daysTemp[i - 1] = parseInt(auxLstDayWeek) + i;
+
+          var auxCont = 0;
+          for(var i = 0; i < daysTemp.length; i++){
+              if(daysTemp[i] > daysThisMonth)
+                  daysMoreThanOne++;
+          }
+
+          if(daysMoreThanOne > 0){
+              currentMonth = currentMonth + 1;
+              daysThisMonth = daysPerMonth[currentMonth];
+
+              currentMonthAux = currentMonth;
+              var aux = daysMoreThanOne;
+              for(var i = 1; i < daysMoreThanOne + 1; i++){
+                  daysTemp[7 - aux] = i;
+                  aux--;
+              }
+          }
+
+          currentMonth = nextCrrMonth;
+
+          $(".dayNumber").each(function(i,e){
+              $(e).text(OneDigitDates(daysTemp[i]));
+          });
+
+          var day = parseInt(lstDay.substr(8,2));
+          if(day ==  daysThisMonth)
+              currentMonth = currentMonth + 1;
+
+          WeeklyAppointments(currentMonth, year,true);
+          getWeekAppointments();
+          CheckVacationsPeriod (usrRol,$(".tdDayApp"))
+
+          //console.log(daysPerMonth[currentMonth]);
+      });
+
+      $("body").on("contextmenu",".tdDayApp",function(e){
+          e.preventDefault();
+          var vacCheck = $(this).attr("data-vac");
+          //console.log($(this));
+          if(vacCheck == "true")
+              alert("Dia de periodo vacacional, intenta en un dia disponible.");
+          else{
+              var menu = $(".testbox");
+              menu.css({"display": "block","top": e.pageY + "px","left": e.pageX + "px" });
+                  var retardo = setTimeout(function(){
+                  menu.css({"display": "none"});
+              }, 2000); 
+              clearTimeout(retardo);
+              fechaCita = $(this).attr("data-fecha");
+              horaCita = $(this).parent(".trHour").attr("data-hour");
+          }
+      });
+
+      function WeeklyAppointments(month,year,wkSwtch){
+
+          $(".tblMainDays").empty();
+          var currentMonth = month, year = year;
+          var daysMonth = daysPerMonth[currentMonth];
+          var actualDate = new Date();
+          var todayMnt = actualDate.getMonth() + 1;
+          var today = actualDate.getDate();
+          var hours = ["10:30:00","11:00:00","11:30:00","12:00:00","12:30:00","13:00:00","13:30:00","14:00:00","14:30:00","15:00:00","15:30:00","16:00:00","16:30:00","17:00:00","17:30:00","18:00:00","18:30:00"];
+
+          var dayNumbers = [];
+          $(".dayNumber").each(function(i,e){
+              dayNumbers[i] = $(e).text();
+          });
+
+          if(wkSwtch == false){
+              var dsPst = [], dsNew = [], crtMnt;;
+              for(var i = 0; i < dayNumbers.length; i++){
+                  if(parseInt(dayNumbers[i]) > 20)
+                      dsPst[i] = dayNumbers[i];
+                  else
+                      dsNew[i] = dayNumbers[i];
+              }
+
+
+              for(var i = 0; i < dsPst.length; i ++){
+                  if(parseInt(dsPst[i]) > today){
+                      currentMonth = currentMonth - 1;
+                      crtMnt = true;
+                      break;
+                  }
+              }
+          }
+
+          /*console.log(dayNumbers)
+          console.log(dsPst)
+          console.log(dsNew)*/
+
+          var tdDiaHora;
+          var auxDay, auxNxtDay;
+
+          for(var i = 0; i < 7; i++){
+              auxDay = dayNumbers[i + 1];
+              if(currentMonth.toString().length == 1){
+                                
+                  tdDiaHora += '<td class="tdcitas2 myPopover tdDayApp" data-day="' + (i + 1) + '" data-fecha="' + year + "-" + "0" + currentMonth + "-" + dayNumbers[i] + '"><table class="tblAppDay"><tbody class="tbdAddApp"></tbody></table></td>';
+
+                  if(crtMnt == true){
+                      if(dayNumbers[i] == daysPerMonth[currentMonth])
+                          currentMonth  = currentMonth + 1;
+                  }else{
+                      if(dayNumbers[i] == daysMonth)
+                          currentMonth  = currentMonth + 1;
+                  }
+                  
+   
+              }else{
+                  tdDiaHora += '<td class="tdcitas2 myPopover tdDayApp" data-day="' + (i + 1) + '" data-fecha="' + year + "-" + currentMonth + "-" + dayNumbers[i] + '"><table class="tblAppDay"><tbody class="tbdAddApp"></tbody></table></td>';
+              }
+          }
+          
+          var trHoraCita;
+          for(var i = 0; i < hours.length - 1; i ++)
+              trHoraCita += '<tr class="trHour cita_' + (i + 1) + '" data-hour="'+ hours[i] + '"></tr>';
+
+          $(".tblMainDays").append(trHoraCita);
+
+          $(".trHour").each(function(i,e){
+              $(e).append(tdDiaHora);
+          });
+      }
+
+
+
+      var hours = ["10:30 am","11:00 am","11:30 am","12:00 pm","12:30 pm","1:00 pm","1:30 pm","2:00 pm","2:30 pm","3:00 pm","3:30 pm","4:00 pm","4:30 pm","5:00 pm","5:30 pm","6:00 pm","6:30 pm"];
+
+      var trHours = [];
+      for(var i = 0; i < hours.length - 1; i++)
+          trHours.push('<tr class="trhorasclass"><td>' + hours[i] + '<br /> ' + hours[i + 1] + '</td></tr>')
+
+      for(var i = 0; i< trHours.length; i++)
+          $(".horasCalen").append(trHours[i]);
+
+      function OneDigitDates(number){
+          if(number.toString().length < 2)
+              number = "0" + number;
+          else
+              number = number;
+
+          return number;
+      }
+
+      function FisrtNameFix(name){
+          var capLttr = name.substr(0,1);
+          return capLttr + ".";
+      }
+
+      function weekCalendar(row, daysPerMonth){
+
+          var date = new Date();
+          var currentDay = date.getDate();
+          var weekDay = date.getDay();
+          
+          if(weekDay != 0)
+              weekDay = weekDay - 1;
+          
+          var weekDays = ["L ","M ","M ","J ","V ","S ","D "], prevDays = [], prevDates = [], postDays = [], postDates = [], thDays = [];
+          
+          var aux, flag;
+
+          aux = 0, flag = false;
+          for(var i = 1; i < weekDay + 1; i++){
+              prevDays[i] = weekDays[i];
+              prevDates[i] = currentDay - weekDay + aux;
+              auxDates = [];
+              currentMonth = date.getMonth() + 1;
+              
+              if(prevDates[i] < 1){
+                  //currentMonth = currentMonth - 1;
+                  prevDates[i] = daysPerMonth[currentMonth - 1] - i + 1;
+                  thDays.push('<th class="nomDia">' + weekDays[i - 1] +'<a class="dayNumber" style="color:#fff;">' + OneDigitDates(prevDates[i]) + '</a></th>');
+                  flag = true;
+              }else{
+                  if(flag == true){
+                      flag = false;
+                      thDays.reverse();
+                  }
+                  thDays.push('<th class="nomDia">' + weekDays[i - 1] +'<a class="dayNumber" style="color:#fff;">' + OneDigitDates(prevDates[i]) + '</a></th>');
+              }
+              aux++;
+          }
+
+          if(flag == true)
+            thDays.reverse();
+
+          thDays.push('<th class="nomDia">' + weekDays[weekDay] + '<a class="dayNumber" style="color:#fff;">' + OneDigitDates(currentDay) + '</a></th>')
+
+          aux = 1;
+          var auxNext;
+          var firstDay = 1;
+          for(var i = weekDay; i < weekDays.length - 1; i++){                        
+              postDays[i] = weekDays[i];
+              //postDates[i] = currentDay + aux;
+              auxNext = currentDay + aux;
+              if(auxNext > daysPerMonth[currentMonth]){
+                  postDates[i] = firstDay;
+                  firstDay++;
+              }else
+                  postDates[i] = currentDay + aux;
+
+              thDays.push('<th class="nomDia">' + weekDays[i + 1] + '<a class="dayNumber" style="color:#fff;">' + OneDigitDates(postDates[i]) + '</a></th>');
+              aux++;
+          }
+
+          for(var i = 0; i < thDays.length; i ++)
+              $(row).append(thDays[i]);                                    
+      }
+
+      function CheckVacationsPeriod (rol,tdDayApp) {
+          $.ajax({
+              url: "/appointment/GetVacationPeriod",
+              type: "GET",
+              dataType: "json",
+              contentType: "application/json; charset-utf8",
+              success: function(resp){
+                  var start, end;
+                  $(resp).each(function(i,e){
+                      start = e.startDate;
+                      end = e.endDate;
+                  })
+
+                  //console.log(start + " " + end)
+                  if(rol != 4){
+                      $(tdDayApp).each(function(i,e){
+                          var tmpFecha = moment($(e).attr("data-fecha")).format("YYYY-MM-DD");
+
+                          if(tmpFecha >= start && tmpFecha <= end){
+                              $(this).css({"background-color":"#D2D6D8"});
+                              $(this).attr("data-vac",true);
+                          }
+                              //console.log("dia normal: " + tmpFecha + ". Dia vacional inicial: " + start)
+                      });
+                  }else{
+
+                  } 
+              }, error: function(xhr,status,error){
+
+              }
+          })
+      }
+
+      (function () {
+         var date = new Date(),
+         weekday = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"];
+
+         document.getElementById('day').innerHTML = weekday[date.getDay()];
+         document.getElementById('number').innerHTML = date.getDate();
+      }) ();
+  });
+
+</script>

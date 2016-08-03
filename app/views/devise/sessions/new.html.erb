@@ -1,0 +1,19 @@
+<%= render "partials/home" %>
+<%= image_tag("monito.png", class: "monito", style: "width: 200px; height: 200px;")%>
+
+<div id="form-main">
+    <div id="form-div">
+        <%= form_for(resource, html: { class: "login-form" }, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+            <%= f.email_field :email, autofocus:true, placeholder: "Usuario", class: "contrasena"%>
+            <%= f.password_field :password, autocomplete: "off", placeholder: "Password", class: "contrasena" %>
+            <%= f.submit "Iniciar sesion", class: "contrasena"%>
+
+        <% end %>
+		<%= link_to "Nuevo Usuario", new_user_registration_path, :class => "btn btn-sm" %>
+    </div>
+</div>
+
+
+
+<%= render "devise/shared/links" %>

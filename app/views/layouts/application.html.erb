@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rudolph Calendar</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+
+  <style>
+    label.radio:before{
+        background: <%= @colorUno %>
+    }
+    .buttonse, .buttons{
+        box-shadow: 0 3px <%= @colorUno %>;
+        -webkit-box-shadow: 0 3px <%= @colorUno %>
+    }
+    .btnComment{
+        background-color: <%= @colorUno %>
+    }
+    .x-cross{
+        color: <%= @colorUno %>;
+    }
+  </style>
+</head>
+<body>
+	
+  <p hidden="hidden" name="colorCalen" id="<%= @colorUno %>"></p>
+  <p hidden="hidden" name="colorCalen2" id="<%= @colorDos %>"></p>
+  <p hidden="hidden" name="userHelper" id="hdnUser" data-usuario=""></p>
+  <p hidden="hidden" id="userRole"><%= @rolUsuario %></p>
+
+<%= yield %>
+	<!--<p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>-->
+
+  <% if !flash[:notice].blank? %>
+
+  <%end%>
+
+  <% if !flash[:alert].blank? %>
+
+  <%end%>
+
+  
+
+    <script>
+      
+
+    	$(document).on("ready", function(){
+
+        $( ".name" ).click(function() {
+          $( "#menu" ).toggle( "blind", 2000 );
+        });
+
+    		$(".btnDia").on("click", function(){
+    			window.location.href = "/day/index";
+    		});
+
+    		$(".btnsemana").on("click", function(){
+    			window.location.href = "/appointment/index"
+    		});
+
+    		$(".btnmes").on("click", function(){
+    			window.location.href = "/monthly/index";
+    		});
+
+    		$('#calendar').datepicker({
+            inline: true,
+            firstDay: 1,
+            showOtherMonths: true,
+            dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S']
+        });
+
+        var colorUno = $("[name='colorCalen']").attr("id");
+        var colorDos = $("[name='colorCalen2']").attr("id");
+
+        $(".ui-datepicker-header, .buttonse, .buttons").css({
+              "background-color": '"' + colorUno +'"', "border-bottom-color":'"' + colorUno +'"'
+        });
+
+        $(".ui-corner-all").on("click", function(){
+            $(".ui-datepicker-header, .buttonse, .buttons").css({"background-color": '"' + colorUno +'"', "border-bottom-color":'"' + colorUno +'"'})
+        });
+
+        $(".iconForm").css({
+            "background-color":'"' + colorUno +'"'
+        });
+
+        $(".ui-state-active, .dropbtn, .dropdown-content a").css({
+            "color":'"' + colorUno +'"'
+        });
+
+        $(".nav-text").on("mouseover", function(){
+            $(this).siblings(".faNewClass").css({ "color":"white"})
+        })
+
+        $(".nav-text").on("mouseleave", function(){
+            $(this).siblings(".faNewClass").css({ "color":'"' + colorUno +'"'})
+        })
+
+        $(".faNewClass").css({
+            "color":'"' + colorUno +'"'
+        });
+
+        $(".faNewClass").on("mouseover", function(){
+            $(this).css({"color":"white"})
+        })
+
+        $(".faNewClass").on("mouseleave", function(){
+            $(this).css({"color":'"' + colorUno +'"'})
+        })
+
+        $(".btnDia, .btnmes, .btnsemana").css({
+            "background-color":'"' + colorUno +'"',
+            "border-top-color":'"' + colorUno +'"',
+            "border-right-color":'"' + colorUno +'"',
+            "border-left-color":'"' + colorUno +'"',
+            "border-bottom-color":'"' + colorUno +'"'
+        });
+
+        $("[data-toggle=popover]").popover({
+            html: true, 
+            content: function() {
+                return $('#popover-content').html();
+            }
+        });
+    	})	
+
+      function myFunction() {
+          document.getElementById("myDropdown").classList.toggle("show");
+      }
+      // Close the dropdown if the user clicks outside of it
+      window.onclick = function(event) {
+          if (!event.target.matches('.dropbtn')) {
+              var dropdowns = document.getElementsByClassName("dropdown-content");
+              var i;
+              for (i = 0; i < dropdowns.length; i++) {
+                  var openDropdown = dropdowns[i];
+                  if (openDropdown.classList.contains('show')) {
+                      openDropdown.classList.remove('show');
+                  }
+              }
+          }
+      }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<%= render "partials/home" %>
+
+<div class="divimg">
+    <!--<img src="resources/img/manos.png" alt="manos" style="width: 200px;  height: 200px;"> -->
+    <%= image_tag("manos.png")%>
+</div>
+<div class="welcome">
+    Bienvenido al calendario de citas de Rudolph, Baker & Associates.<br/>
+    Por medio de este calendario usted podra agendar su cita.
+</div>
+<div class="boton">
+    <%= button_to "Continuar", appointment_index_path, method: :get, style: 'background: #34495E;border-top: 1px solid #283A49;border-right: 1px solid #283A49;border-bottom: 1px solid #283A49;border-left: 1px solid #283A49; box-shadow: 2px 1px 1px 0 rgba(0, 0, 0, 0.4); color: #ECF0F1; border-radius: 3px; padding: 0px 20px; font-size: 22px;'%>
+
+</div> 

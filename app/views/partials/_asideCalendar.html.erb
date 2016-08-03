@@ -1,0 +1,25 @@
+<div class="aside-main">                  
+    <div class="containercalen" style="background: <%= @colorUno %>">
+        <span id="day">Wednesday</span>
+        <div class="daycontainer">
+            <span id="number">12</span>
+        </div>
+        <div class="thing1" style="background: <%= @colorUno %>"></div>
+        <div class="thing2" style="background: <%= @colorUno %>"></div>
+        <div class="hole1"></div>
+        <div class="hole2"></div>
+    </div> 
+    <div id="calendar"></div>
+    <div id="botones">
+        <%= submit_tag "Dia", class: "btnDia"%>
+        <%= submit_tag "Semana", class: "btnsemana" %>
+        <%= submit_tag "Mes", class: "btnmes" %>
+    </div>
+    <% if @rolUsuario == 4 || @rolUsuario == 2 %>
+        <div id="personal">
+            <h3 style="margin-left:25px; font-size:20px; font-weight:bold; cursor:pointer;" id="allCalendars">Otros Calendarios</h3>
+            <ul class="listUsers"></ul>
+        </div>     
+    <%else%>
+    <%end%>
+</div>

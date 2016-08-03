@@ -1,0 +1,33 @@
+<header>
+    <nav class="navbar navbar-default" style="margin-bottom:0px; width:100%; position:fixed;  z-index:18; margin-top:-10px;" >
+        <div class="container-fluid ">
+            <div class="navbar-header">
+                <div class="user">
+                    <div class="noti" style="color:<%= @colorUno %>"><i class="fa fa-bell fa-2x"></i>
+                        <div class="messages">
+                            <a href="#" class="message">Someone added you</a>
+                            <a href="#" class="message">Someone added you</a>
+                            <a href="#" class="message">Someone added you</a>
+                        </div>
+                    </div>
+                    <div class="separator" style="background-color:<%= @colorUno%>"></div>
+                    <div class="avatar">
+                        <%= image_tag("https://webservices.prerelease.phemium.com/consultant/getresource.php?resid=68e257cf5e1147cd8b58d4bc67d1ab46") %>
+                    </div>
+                     <div class="dropdown">
+                        <button onclick="myFunction()" class="dropbtn"><%= @usuario %><i class="fa fa-caret-down carete" aria-hidden="true"></i></button>
+                        <div id="myDropdown" class="dropdown-content">
+                           <a href="#reportes">Reporte</a>
+                           <a id="dashVar">Dashboard</a>
+                           <hr>
+                           <%= link_to "Cerrar sesion", destroy_user_session_path, method: :delete, class: "sub" %>
+                        </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="ajaxLoad" hidden><%= image_tag("321.gif") %></div>
+<div class="loadModal" hidden></div>
+<%= render "partials/generalScripts" %>

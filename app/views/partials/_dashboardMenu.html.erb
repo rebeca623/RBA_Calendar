@@ -1,0 +1,64 @@
+<div class="area"></div>
+<nav class="main-menu">
+    <ul>
+        <li>
+            <a id="dashHome" data-div="" class="lnkNav"><i class="fa fa-home faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Inicio</span></a>
+        </li>
+        <li class="has-subnav">
+            <a id="dashNotif" data-div="" class="lnkNav"><i class="fa fa-envelope faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Notificaciones</span></a>
+        </li>
+        <li class="has-subnav">
+            <a id="dashCal" data-div="" class="lnkNav"><i class="fa fa-calendar faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Calendario</span></a>
+        </li>
+        <li class="has-subnav">
+            <a id="dashCus" data-div="" class="lnkNav"><i class="fa fa-users faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Clientes</span></a>
+        </li>
+        <li>
+            <a id="dashAnn" data-div="" class="lnkNav"><i class="fa fa-bullhorn faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Anuncios</span></a>
+        </li>
+        <% if current_user.role_id == 1 || current_user.role_id == 2 %>
+            <li class="has-subnav">
+                <a id="dashRepo" data-div="" class="lnkNav"><i class="fa fa-file-text faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Reportes</span></a>
+            </li>
+            <li>
+                <a id="dashDays" data-div="" class="lnkNav"><i class="fa fa-flag faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Dias festivos</span></a>
+            </li>
+            <li>
+                <a id="dashUser" data-div="divUsrs" class="lnkNav"><i class="fa fa-child faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Usuarios del sistema</span></a>
+            </li>
+            <li>
+                <a id="dashLog" data-div="divLog" class="lnkNav"><i class="fa fa-book faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Historial de acciones</span></a>
+            </li>
+        <% end %>
+        <li>
+            <a id="dashVac" data-div="divVac" class="lnkNav"><i class="fa fa-plane faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Vacaciones</span></a>
+        </li>
+        <li>
+            <a id="dashUser" data-div="divUsr" class="lnkNav"><i class="fa fa-user faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Perfil de usuario</span></a>
+        </li>
+        <li>
+            <a id="dashInfo" data-div="" class="lnkNav"><i class="fa fa-info faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Información</span></a>
+        </li>
+    </ul>
+    
+
+    <!--<ul class="logout">
+        <li>
+            <a id="dashLog"><i class="fa fa-power-off faNewClass" style="font-size:2em; top:3px; bottom:3px;"></i><span class="nav-text">Cerrar sesion</span></a> 
+        </li>  
+    </ul>-->
+</nav>
+
+
+
+<script type="text/javascript">
+    $(document).on("ready", function(){
+        $("#dashHome").on("click", function(e){
+            window.location.href = "/users/variety"
+        });
+
+        $("#dashCal").on("click", function(e){
+            window.location.href = "/appointment/index"
+        })
+    })
+</script>
