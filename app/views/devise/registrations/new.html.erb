@@ -40,7 +40,7 @@
     <%end%>
 </div>
 
-<div class="clrsTbl">
+<!--<div class="clrsTbl">
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
       <div class="panel panel-default">
         <div class="panel panel-default">
@@ -78,7 +78,7 @@
 
     $(document).on("ready", function(){
 
-        $.ajax({
+        /*$.ajax({
             url:"/log/colorList",
             type:"get",
             data:'json',
@@ -100,7 +100,8 @@
         $("body").on("click",".tblClsChk", function(){
             $(".tblClsChk").prop("checked",false);
             $(this).prop("checked",true);
-        })
+        })*/
+
 
         var datos = $(".field_with_errors").children();
         console.log(datos)
