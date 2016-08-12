@@ -180,7 +180,7 @@ class LogController < ApplicationController
 	#TEMP
 	def colorList
 		#@color = User.joins(:color).select("color as color1, colorsec, nombre, apaterno, used").all
-		@color = Color.where("used != ?",true).select("id, color as color1, colorsec as color2").all
+		@color = Color.select("id, color as color1, colorsec as color2").all #where("used != ?",true).
 		respond_to do |f|
 			f.json { render :text => @color.to_json }
 		end
