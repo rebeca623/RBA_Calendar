@@ -6,7 +6,7 @@
         <%= form_for(resource, html: { class: "login-form" }, as: resource_name, url: session_path(resource_name)) do |f| %>
 
             <%= f.email_field :email, autofocus:true, placeholder: "Usuario", class: "contrasena"%>
-            <%= f.password_field :password, autocomplete: "off", placeholder: "Password", class: "contrasena" %>
+            <%= f.password_field :password, autocomplete: "off", placeholder: "Password", class: "contrasena", style: "margin-left:0px; width:100%;" %>
             <%= f.submit "Iniciar sesion", class: "contrasena"%>
 
         <% end %>
@@ -16,4 +16,4 @@
 
 
 
-<%= render "devise/shared/links" %>
+<%= render "devise/shared/links" %> 

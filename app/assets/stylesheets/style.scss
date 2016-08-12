@@ -273,7 +273,7 @@ button {
 .contrasena{
      font-size: 14px;
      border-radius: 5px;
-     line-height: 22px;
+     /*line-height: 22px;*/
      background-color: #fbfbfb;
      padding: 10px 10px 10px 10px;
      margin-bottom: 15px;
@@ -1283,18 +1283,29 @@ input[type=password] {
    font-weight: 500;
    font-size: 12px;
    border-radius: 5px;
-   line-height: 22px;
+   /*line-height: 22px;*/
    padding: 10px 10px 10px 10px;
    margin-bottom: 15px;
-   width: 100%;
+   margin-left: -5px;
+   /*width: 100%;*/
    -webkit-box-sizing: border-box;
    -moz-box-sizing: border-box;
    -ms-box-sizing: border-box;
    box-sizing: border-box;
 }
 
+.clrsTbl{
+    width: 540px;
+    margin-left: 35.4%;
+    margin-top:500px;
+}
+
 .nUser{
     width: 125px;
+}
+
+#user_role_id{
+    margin-left: -5px;
 }
 
 #textarea{
