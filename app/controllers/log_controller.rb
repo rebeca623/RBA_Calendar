@@ -34,7 +34,7 @@ class LogController < ApplicationController
 			elsif user == "" && action == "" && date1 != nil && date2 != nil
 				@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where("fechaLog > ? AND fechaLog < ?",date1,date2).all
 			elsif user != nil && action != nil && date1 != nil && date2 != nil
-			 	@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where("user_id = ? AND action_id = ? AND fechaLog > ? AND fechaLog < ?",user,action,date1,date2).all
+			 	@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where("user_id = ? AND action_id = ? AND fechalog > ? AND fechalog < ?",user,action,date1,date2).all
 			end
 
 			respond_to do |format|
@@ -54,9 +54,9 @@ class LogController < ApplicationController
 		usr = params[:usr]
 
 		if usr == "" || usr == nil
-			@userCases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipoCaso").all
+			@userCases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipocaso").all
 		else
-			@userCases = Assignment.joins(:case_type).joins(:user).where(:user_id => usr).select("case_type_id as id, tipoCaso").all
+			@userCases = Assignment.joins(:case_type).joins(:user).where(:user_id => usr).select("case_type_id as id, tipocaso").all
 		end
 
 		respond_to do |format|
@@ -99,9 +99,9 @@ class LogController < ApplicationController
 
 			if @newUserTask.save
 				if user == nil
-					@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipoCaso").all
+					@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipocaso").all
 				else
-					@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => user).select("case_type_id as id, tipoCaso").all
+					@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => user).select("case_type_id as id, tipocaso").all
 				end
 
 				respond_to do |format|
@@ -120,10 +120,10 @@ class LogController < ApplicationController
 
 		if user == nil || user == ""
 			@userTask = Assignment.where(:user_id => current_user.id, :case_type_id => params[:ctype]).delete_all
-			@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipoCaso").all
+			@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => current_user.id).select("case_type_id as id, tipocaso").all
 		else
 			@userTask = Assignment.where(:user_id => user, :case_type_id => params[:ctype]).delete_all
-			@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => user).select("case_type_id as id, tipoCaso").all
+			@cases = Assignment.joins(:case_type).joins(:user).where(:user_id => user).select("case_type_id as id, tipocaso").all
 		end
 
 		respond_to do |format|
