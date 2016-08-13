@@ -20,7 +20,7 @@ class LogController < ApplicationController
 		date1 = params[:date1]
 		date2 = params[:date2]
 
-		@action = History.joins(:user).select("nombre, apaterno, fechaLog, detalles, ubicacion").all
+		@action = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").all
 
 		if user == "" && action == "" && date1 == "" && date2 == ""
 			respond_to do |format|
@@ -28,13 +28,13 @@ class LogController < ApplicationController
 			end
 		else
 			if user != nil && action == "" && date1 == "" && date2 == "" 
-				@actions = History.joins(:user).select("nombre, apaterno, fechaLog, detalles, ubicacion").where(:user_id => user).all
+				@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where(:user_id => user).all
 			elsif user == "" && action != nil && date1 == "" && date2 == ""
-				@actions = History.joins(:user).select("nombre, apaterno, fechaLog, detalles, ubicacion").where(:action_id => action).all
+				@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where(:action_id => action).all
 			elsif user == "" && action == "" && date1 != nil && date2 != nil
-				@actions = History.joins(:user).select("nombre, apaterno, fechaLog, detalles, ubicacion").where("fechaLog > ? AND fechaLog < ?",date1,date2).all
+				@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where("fechaLog > ? AND fechaLog < ?",date1,date2).all
 			elsif user != nil && action != nil && date1 != nil && date2 != nil
-			 	@actions = History.joins(:user).select("nombre, apaterno, fechaLog, detalles, ubicacion").where("user_id = ? AND action_id = ? AND fechaLog > ? AND fechaLog < ?",user,action,date1,date2).all
+			 	@actions = History.joins(:user).select("nombre, apaterno, fechalog, detalles, ubicacion").where("user_id = ? AND action_id = ? AND fechaLog > ? AND fechaLog < ?",user,action,date1,date2).all
 			end
 
 			respond_to do |format|
@@ -65,7 +65,7 @@ class LogController < ApplicationController
 	end
 
 	def GetAllCaseTypes
-		@caseTypes = CaseType.select("id,tipoCaso").all
+		@caseTypes = CaseType.select("id, tipocaso").all
 		respond_to do |format|
 			format.json { render :text => @caseTypes.to_json }
 		end
@@ -143,7 +143,7 @@ class LogController < ApplicationController
 		endDate = params[:end]
 		comment = params[:comment]
 
-		@vacation = Vacation.create(:startDate => startDate, :endDate => endDate, :comment => comment, :user_id => current_user.id)
+		@vacation = Vacation.create(:startdate => startDate, :enddate => endDate, :comment => comment, :user_id => current_user.id)
 
 		if @vacation.save
 			respond_to do |format|

@@ -397,7 +397,7 @@
 					var tr = "", cnt = 1;
 					$(tbl).empty();
 					$(resp).each(function(i,e){
-						tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1' ></span> Desasignar</a></td></tr>"
+						tr += "<tr><td>" + cnt + "</td><td>" + e.tipocaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1' ></span> Desasignar</a></td></tr>"
 						cnt++;
 					})
 					$(tbl).append(tr); 
@@ -417,7 +417,7 @@
 			success:function(resp){
 				var opt = "";
 				$(resp).each(function(i,e){
-					opt += "<option value='" + e.id + "'>" + e.tipoCaso + "</option>";
+					opt += "<option value='" + e.id + "'>" + e.tipocaso + "</option>";
 				})
 				$("#slctCase").append(opt);
 			}, error:function(xhr,status,error){
@@ -445,7 +445,7 @@
 						$("#casesTbl").empty();
 						var tr = "", cnt = 1;
 						$(resp).each(function(i,e){
-							tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
+							tr += "<tr><td>" + cnt + "</td><td>" + e.tipocaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
 							cnt++;
 						})
 						$("#casesTbl").append(tr);
@@ -505,7 +505,7 @@
 					$("#casesTbl").empty();
 					var tr = "", cnt = 1;
 					$(resp).each(function(i,e){
-						tr += "<tr><td>" + cnt + "</td><td>" + e.tipoCaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
+						tr += "<tr><td>" + cnt + "</td><td>" + e.tipocaso + "</td><td class='text-center'><a href='#' data-case='" + e.id + "' class='btn btn-danger btn-xs btnDesa'><span class='fa fa-times fa-1'></span> Desasignar</a></td></tr>"
 						cnt++;
 					})
 					$("#casesTbl").append(tr);
@@ -569,7 +569,7 @@
 					
 					var tr = "", cnt = 1;
 					$(resp).each(function(i,e){
-						tr += "<tr><td scope='row'>" + cnt + "</td><td>" + moment(e.fechaLog).format("DD/MM/YYYY HH:mm:ss a") + "</td><td>" + e.nombre + " " + e.apaterno + "</td><td>" + e.detalles + "</td><td>" + e.ubicacion + "</td></tr>";
+						tr += "<tr><td scope='row'>" + cnt + "</td><td>" + moment(e.fechalog).format("DD/MM/YYYY HH:mm:ss a") + "</td><td>" + e.nombre + " " + e.apaterno + "</td><td>" + e.detalles + "</td><td>" + e.ubicacion + "</td></tr>";
 						cnt++;
 					});
 					$(".tblDataLog").append(tr);

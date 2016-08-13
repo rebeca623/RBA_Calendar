@@ -128,7 +128,7 @@ class AppointmentController < ApplicationController
       @remote_ip = request.remote_ip#request.env["HTTP_X_FORWARDED_FOR"]
       
       descripcion = Action.find(action)
-      @log = History.new(:user_id => user.id,:action_id => 6,:fechaLog => Time.now,:client_id => client.id,:detalles => descripcion.accion + " para " + lawyer.nombre + " " + lawyer.apaterno + " con " + client.nombreClt + " " + client.apaternoClt + " para el dia " + fecha + " a las " + hora + ".",:ubicacion => @remote_ip)
+      @log = History.new(:user_id => user.id,:action_id => 6,:fechaLog => Time.now,:client_id => client.id,:detalles => descripcion.accion + " para " + lawyer.nombre + " " + lawyer.apaterno + " con " + client.nombreclt + " " + client.apaternoclt + " para el dia " + fecha + " a las " + hora + ".",:ubicacion => @remote_ip)
       @log.save
   end
 
@@ -139,7 +139,7 @@ class AppointmentController < ApplicationController
           @tipocasos = CaseType.all
       else current_user.role_id == 3
 		      @abogados = User.where("role_id = ? AND id = ?", 3, current_user.id)
-          @tipocasos = current_user.case_type.all.select("id", "tipoCaso");
+          @tipocasos = current_user.case_type.all.select("id", "tipocaso");
       end
 
 		  
@@ -147,9 +147,9 @@ class AppointmentController < ApplicationController
 
   def GetAppointments
       if current_user.role_id == 4
-          @weekAppointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND fecha >= ? AND fecha <= ? ", params[:fecha1],params[:fecha2]).all.select("id", "user_id, client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance")
+          @weekAppointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND fecha >= ? AND fecha <= ? ", params[:fecha1],params[:fecha2]).all.select("id", "user_id, client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance")
       else
-          @weekAppointments = Appointment.joins(:client).where("user_id = ? AND status_app = 1 AND fecha >= ? AND fecha <= ?", current_user.id, params[:fecha1],params[:fecha2]).select("id", "client_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance")
+          @weekAppointments = Appointment.joins(:client).where("user_id = ? AND status_app = 1 AND fecha >= ? AND fecha <= ?", current_user.id, params[:fecha1],params[:fecha2]).select("id", "client_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance")
       end
 
       respond_to do |format|
@@ -159,7 +159,7 @@ class AppointmentController < ApplicationController
 
   def GetAssistantAppointments
       if current_user.role_id == 2
-          @weekAppointments = Appointment.joins(:client).joins(:user).where("user_id = ? AND status_app = 1 AND fecha >= ? AND fecha <= ?", params[:lawyerId], params[:fecha1],params[:fecha2]).select("id", "client_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance, nombre, apaterno")
+          @weekAppointments = Appointment.joins(:client).joins(:user).where("user_id = ? AND status_app = 1 AND fecha >= ? AND fecha <= ?", params[:lawyerId], params[:fecha1],params[:fecha2]).select("id", "client_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance, nombre, apaterno")
       else
           @weekAppointments = 0
       end
@@ -179,7 +179,7 @@ class AppointmentController < ApplicationController
   end
 
   def searchCustomer
-      @client = Client.where("lower(nombreClt) = ? AND lower(apaternoClt) = ? OR lower(emailClt) = ? OR telefonoClt = ? OR numCaso = ?", params[:name].downcase,params[:apaterno].downcase,params[:email].downcase,params[:telefono],params[:numCase]).first
+      @client = Client.where("lower(nombreclt) = ? AND lower(apaternoclt) = ? OR lower(emailclt) = ? OR telefonoclt = ? OR numcaso = ?", params[:name].downcase,params[:apaterno].downcase,params[:email].downcase,params[:telefono],params[:numcase]).first
       
       respond_to do |format|
           format.json { render :text => @client.to_json }
@@ -213,7 +213,7 @@ class AppointmentController < ApplicationController
   end
 
   def GetVacationPeriod
-      @vacations = Vacation.where(:user_id => current_user.id).select("startDate,endDate,comment").all
+      @vacations = Vacation.where(:user_id => current_user.id).select("startdate,enddate,comment").all
       respond_to do |format|
           format.json { render :text => @vacations.to_json }
       end
@@ -226,7 +226,7 @@ class AppointmentController < ApplicationController
   end
 
   def client_params
-    params.require(:client).permit(:nombreClt,:apaternoClt,:amaternoClt,:emailClt,:direccion,:telefonoClt)
+    params.require(:client).permit(:nombreclt,:apaternoclt,:amaternoclt,:emailclt,:direccion,:telefonoclt)
   end
 
   def check_params
@@ -234,7 +234,7 @@ class AppointmentController < ApplicationController
   end
 
 	def appointment_params
-		params.require(:appointment).permit(:numpersonas, :fecha, :hora, :comentario, :client_id, :user_id, :case_type_id, :tipoCita)
+		params.require(:appointment).permit(:numpersonas, :fecha, :hora, :comentario, :client_id, :user_id, :case_type_id, :tipocita)
 	end
 
   def log_params

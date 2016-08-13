@@ -4,7 +4,7 @@ class DayController < ApplicationController
     before_action :GetAbogadosCasos
 	
   	def index
-      @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND user_id = ? AND fecha = ?", current_user.id, params[:fecha]).all.select("numCaso", "client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance")
+      @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND user_id = ? AND fecha = ?", current_user.id, params[:fecha]).all.select("numcaso", "client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance")
       #@appointments = Appointment.where(:user_id => current_user.id,:fecha => params[:fecha])
       respond_to do |format|
           format.html
@@ -24,9 +24,9 @@ class DayController < ApplicationController
 
     def GetAppointments
         if current_user.role_id != 4
-    			 @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND user_id = ? AND fecha = ?", current_user.id,params[:fecha]).all.select("id", "client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance")
+    			 @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND user_id = ? AND fecha = ?", current_user.id,params[:fecha]).all.select("id", "client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance")
     		else
-    			 @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND fecha = ?", params[:fecha]).all.select("id", "user_id, client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreClt, apaternoClt, numpersonas, comentario, telefonoClt, emailClt, attendance")
+    			 @appointments = Appointment.joins(:client).joins(:user).joins(:case_type).where("status_app = 1 AND fecha = ?", params[:fecha]).all.select("id", "user_id, client_id, tipocaso, nombre, apaterno, color_id, fecha, hora, nombreclt, apaternoclt, numpersonas, comentario, telefonoclt, emailclt, attendance")
     		end
 
     		respond_to do |format|
