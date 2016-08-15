@@ -11,7 +11,7 @@
             <%= label_tag "radioThree", "Cliente", class: "radio", :data => { :val => 3 }%>
         </div>
         
-        <%= select_tag "slctTipoCita", options_from_collection_for_select(@tipocasos, "id", "tipoCaso"), class: "select frmAppSlct", prompt: "Seleccione.." %>
+        <%= select_tag "slctTipoCita", options_from_collection_for_select(@tipocasos, "id", "tipocaso"), class: "select frmAppSlct", prompt: "Seleccione.." %>
         <%= select_tag "slctAbogado", class: "frmAppSlct", prompt: "Seleccione.." %>
         <a class="buttonse" id="btnSearch"><i class="fa fa-search"></i></a>
 

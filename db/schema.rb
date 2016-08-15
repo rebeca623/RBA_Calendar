@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160801225931) do
+ActiveRecord::Schema.define(version: 20160813225642) do
 
   create_table "actions", force: :cascade do |t|
     t.string   "accion"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20160801225931) do
     t.integer  "user_id"
     t.integer  "case_type_id"
     t.integer  "status_app",   default: 1
-    t.integer  "tipoCita"
+    t.integer  "tipocita"
     t.boolean  "attendance"
   end
 
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20160801225931) do
   end
 
   create_table "case_types", force: :cascade do |t|
-    t.string   "tipoCaso"
+    t.string   "tipocaso"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "duration_type"
@@ -58,15 +58,15 @@ ActiveRecord::Schema.define(version: 20160801225931) do
   end
 
   create_table "clients", force: :cascade do |t|
-    t.string   "nombreClt"
-    t.string   "apaternoClt"
-    t.string   "amaternoClt"
+    t.string   "nombreclt"
+    t.string   "apaternoclt"
+    t.string   "amaternoclt"
     t.string   "direccion"
-    t.string   "emailClt"
-    t.string   "telefonoClt"
+    t.string   "emailclt"
+    t.string   "telefonoclt"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.integer  "numCaso"
+    t.integer  "numcaso"
   end
 
   create_table "colors", force: :cascade do |t|
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20160801225931) do
     t.datetime "updated_at", null: false
     t.integer  "user_id"
     t.integer  "action_id"
-    t.datetime "fechaLog"
+    t.datetime "fechalog"
     t.integer  "client_id"
     t.text     "detalles"
     t.string   "ubicacion"
@@ -129,13 +129,13 @@ ActiveRecord::Schema.define(version: 20160801225931) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
-    t.integer  "color_id",               default: 14, null: false
+    t.integer  "color_id",               default: 1,  null: false
     t.integer  "role_id",                default: 4,  null: false
     t.string   "nombre",                 default: "", null: false
     t.string   "apaterno",               default: "", null: false
     t.string   "amaterno"
     t.string   "telefono"
-    t.integer  "status"
+    t.integer  "status",                 default: 1,  null: false
   end
 
   add_index "users", ["color_id"], name: "index_users_on_color_id"
@@ -144,8 +144,8 @@ ActiveRecord::Schema.define(version: 20160801225931) do
   add_index "users", ["role_id"], name: "index_users_on_role_id"
 
   create_table "vacations", force: :cascade do |t|
-    t.date     "startDate"
-    t.date     "endDate"
+    t.date     "startdate"
+    t.date     "enddate"
     t.text     "comment"
     t.integer  "user_id"
     t.datetime "created_at", null: false
