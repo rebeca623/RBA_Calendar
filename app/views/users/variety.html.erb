@@ -368,13 +368,14 @@
 			data:'json',
 			contentType:"application/json; charset-UTF8",
 			success: function(resp){
-				$("#clsTbl").empty();
+				console.log(resp)
+				$(".clsTbl").empty();
 				var opt = "", cnt = 1;
 				$(resp).each(function(i,e){
 					opt += "<tr><td>" + cnt + "</td><td style='background-color:" + e.color1 + "; color:white; text-align:center;'>" + e.color1 + "</td><td style='background-color:" + e.color2 + "; color:white;text-align:center;'>" + e.color2 + "</td><td><a data-color='" + e.id + "' data-original-title='Asignar colores' data-toggle='tooltip' type='button' class='btn btn-sm btn-success btnClr'><i class='fa fa-check fa-1'></i></a></td></tr>"
 					cnt++;
 				});
-				$("#clsTbl").append(opt);
+				$(".clsTbl").append(opt);
 			}, error: function(xhr,status,error){
 				console.log(xhr);
 				alert(error)
